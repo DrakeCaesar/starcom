@@ -61,9 +61,14 @@
         { item: "Adm", quantity: 8, buy_price: 710.2, sell_price: 352.0 },
       ];
 
-      // Function to calculate percentage
+      // Function to calculate percentage based on game logic (rounded, no decimals)
       function calculatePercentage(price, basePrice) {
-        return ((price / basePrice) * 100).toFixed(2);
+        return Math.round((price / basePrice - 1) * 100);
+      }
+
+      // Function to format percentage (e.g., +42% or -30%)
+      function formatPercentage(percentage) {
+        return percentage > 0 ? `+${percentage}%` : `${percentage}%`;
       }
 
       // Function to populate the table
@@ -82,9 +87,9 @@
             <td>${data.item}</td>
             <td>${data.quantity}</td>
             <td>${data.sell_price}</td>
-            <td>${sellPercentage}%</td>
+            <td>${formatPercentage(sellPercentage)}</td>
             <td>${data.buy_price}</td>
-            <td>${buyPercentage}%</td>
+            <td>${formatPercentage(buyPercentage)}</td>
         `;
           tableBody.appendChild(row);
         });
