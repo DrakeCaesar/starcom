@@ -16,6 +16,7 @@ const commodityRates = {
   Xenium: 200.0,
   Adamantine: 500.0,
 };
+
 import { factions } from "./factions";
 
 console.clear();
@@ -28,62 +29,62 @@ function recommendTradeRoutes() {
     tableBody.innerHTML = ""; // Clear previous routes
   }
 
-  // Iterate through each commodity
-  for (const commodity in commodityRates) {
-    let bestBuy = {
-      faction: null as string | null,
-      price: Infinity,
-      percent: Infinity,
-    };
-    let bestSell = {
-      faction: null as string | null,
-      price: -Infinity,
-      percent: -Infinity,
-    };
+  // Iterate through each faction
+  for (const factionName in factions) {
+    const factionData = factions[factionName];
 
-    // Iterate through factions to find best buy/sell
-    for (const factionName in factions) {
-      const tradeData = factions[factionName][commodity];
-    
-      if (tradeData) {
-        // Check for best buy: lowest price with the best discount (negative percentage)
-        if (tradeData.buyPercent < bestBuy.percent) {
-          bestBuy = {
-            faction: factionName,
-            price: tradeData.buy,
-            percent: tradeData.buyPercent,
-          };
-        }
+    // Determine the faction's currency
+    let factionCurrency: string | null = null;
 
-        // Check for best sell: highest price with the best premium (positive percentage)
-        if (tradeData.sellPercent > bestSell.percent) {
-          bestSell = {
-            faction: factionName,
-            price: tradeData.sell,
-            percent: tradeData.sellPercent,
-          };
-        }
+    for (const commodity in commodityRates) {
+      if (!factionData[commodity]) {
+        factionCurrency = commodity;
+        break; // We found the commodity they don't sell, so it must be their currency
       }
     }
 
-    // Ensure we only display valid routes where buy/sell data exists
-    const buyInfo = bestBuy.faction
-      ? `${bestBuy.faction} (Buy at ${bestBuy.price.toFixed(2)} / ${
-          bestBuy.percent
-        }%)`
-      : "No Data";
-    const sellInfo = bestSell.faction
-      ? `${bestSell.faction} (Sell at ${bestSell.price.toFixed(2)} / ${
-          bestSell.percent
-        }%)`
-      : "No Data";
+    if (!factionCurrency) {
+      console.error(`Currency not found for faction: ${factionName}`);
+      continue; // Skip if we can't determine the currency
+    }
 
-    // Add row to table
-    const row = `<tr>
-            <td>${commodity}</td>
-            <td>${buyInfo}</td>
-            <td>${sellInfo}</td>
-        </tr>`;
-    tableBody?.insertAdjacentHTML("beforeend", row);
+    const currencyRate = commodityRates[factionCurrency];
+
+    console.log(`Faction: ${factionName} (${factionCurrency})`);
+
+    // Iterate through commodities to calculate percentages based on the aluminum conversion
+    for (const commodity in commodityRates) {
+      const tradeData = factionData[commodity];
+
+      if (!tradeData || commodity === factionCurrency) {
+        continue; // Skip the faction currency
+      }
+
+      const commodityRate = commodityRates[commodity];
+
+      // Convert buy and sell prices to aluminum equivalents
+      const buyInAluminum = tradeData.buy * currencyRate;
+      const sellInAluminum = tradeData.sell * currencyRate;
+
+      // Calculate the true percentage difference compared to the commodity's standard aluminum value
+      const trueBuyPercentage = (buyInAluminum / commodityRate - 1) * 100;
+      const trueSellPercentage = (sellInAluminum / commodityRate - 1) * 100;
+
+      // Display the calculated values
+      const buyInfo = `Buy at ${buyInAluminum.toFixed(
+        2,
+      )} (True Percentage: ${trueBuyPercentage.toFixed(2)}%)`;
+      const sellInfo = `Sell at ${sellInAluminum.toFixed(
+        2,
+      )} (True Percentage: ${trueSellPercentage.toFixed(2)}%)`;
+
+      // Add row to table
+      const row = `<tr>
+          <td>${commodity}</td>
+          <td>${factionName} (${buyInfo})</td>
+          <td>${factionName} (${sellInfo})</td>
+      </tr>`;
+      tableBody?.insertAdjacentHTML("beforeend", row);
+    }
   }
 }
