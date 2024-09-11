@@ -2,16 +2,43 @@
   "name": "starcom",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/index",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint": "eslint 'src/**/*.ts'",
+    "dev": "vite",
+    "build": "vite build",
+    "serve": "vite preview",
+    "test": "node tests",
+    "start": "npx serve ."
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^22.1.0",
+    "@types/toastr": "^2.1.43",
+    "@types/xml2js": "^0.4.14",
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "eslint": "^9.8.0",
+    "sass": "^1.77.8",
+    "typescript": "^5.5.4",
+    "vite": "^5.3.5"
+  },
   "dependencies": {
-    "@types/node": "^22.5.4",
+    "axios": "^1.7.3",
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "toastr": "^2.1.4",
     "ts-node": "^10.9.2",
-    "typescript": "^5.5.4"
+    "tslib": "^2.6.3",
+    "xml2js": "^0.6.2"
+  },
+  "exports": {
+    ".": {
+      "import": "./build/release.js",
+      "types": "./build/release.d.ts"
+    }
   }
 }
