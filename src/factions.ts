@@ -1,4 +1,19 @@
-export const factions = {
+interface CommodityPrices {
+  buy: number;
+  sell: number;
+  buyPercent: number;
+  sellPercent: number;
+}
+
+interface Faction {
+  [commodity: string]: CommodityPrices;
+}
+
+interface Factions {
+  [factionName: string]: Faction;
+}
+
+export const factions: Factions = {
   "Aquarian Colony": {
     Aluminum: { buy: 0.17, sell: 0.09, buyPercent: +65, sellPercent: -13 },
     Copper: { buy: 0.24, sell: 0.13, buyPercent: +62, sellPercent: -15 },

@@ -18,25 +18,30 @@ const commodityRates = {
 };
 import { factions } from "./factions";
 
-document.addEventListener("DOMContentLoaded", () => {
-  document
-    .querySelector("button")
-    .addEventListener("click", recommendTradeRoutes);
-  recommendTradeRoutes();
-});
+recommendTradeRoutes();
 
 function recommendTradeRoutes() {
   const tableBody = document.querySelector("#tradeRoutes tbody");
-  tableBody.innerHTML = ""; // Clear previous routes
+  if (tableBody) {
+    tableBody.innerHTML = ""; // Clear previous routes
+  }
 
   // Iterate through each commodity
   for (const commodity in commodityRates) {
-    let bestBuy = { faction: null, price: Infinity, percent: 0 };
-    let bestSell = { faction: null, price: 0, percent: 0 };
+    let bestBuy = {
+      faction: null as string | null,
+      price: Infinity,
+      percent: 0,
+    };
+    let bestSell = {
+      faction: null as string | null,
+      price: -Infinity,
+      percent: 0,
+    };
 
     // Iterate through factions to find best buy/sell
-    for (const faction in factions) {
-      const tradeData = factions[faction][commodity];
+    for (const factionName in factions) {
+      const tradeData = factions[factionName][commodity];
 
       if (tradeData) {
         // Check for best buy: lowest price with the best discount (negative percentage)
@@ -45,19 +50,19 @@ function recommendTradeRoutes() {
           tradeData.buyPercent < bestBuy.percent
         ) {
           bestBuy = {
-            faction,
+            faction: factionName,
             price: tradeData.buy,
             percent: tradeData.buyPercent,
           };
         }
 
-        // Check for best sell: highest price with the highest profit (positive percentage)
+        // Check for best sell: highest price with the best premium (positive percentage)
         if (
           tradeData.sellPercent > 0 &&
           tradeData.sellPercent > bestSell.percent
         ) {
           bestSell = {
-            faction,
+            faction: factionName,
             price: tradeData.sell,
             percent: tradeData.sellPercent,
           };
@@ -83,6 +88,6 @@ function recommendTradeRoutes() {
             <td>${buyInfo}</td>
             <td>${sellInfo}</td>
         </tr>`;
-    tableBody.insertAdjacentHTML("beforeend", row);
+    tableBody?.insertAdjacentHTML("beforeend", row);
   }
 }
