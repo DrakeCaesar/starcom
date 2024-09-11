@@ -1,0 +1,10 @@
+{
+  "configurations": [
+    {
+      "type": "chrome",
+      "name": "Launch Chrome Debugger",
+      "request": "launch",
+      "url": "http://localhost:5173"
+    }
+  ]
+}

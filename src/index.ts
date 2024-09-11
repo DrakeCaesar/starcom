@@ -18,6 +18,8 @@ const commodityRates = {
 };
 import { factions } from "./factions";
 
+console.clear();
+
 recommendTradeRoutes();
 
 function recommendTradeRoutes() {
@@ -31,12 +33,12 @@ function recommendTradeRoutes() {
     let bestBuy = {
       faction: null as string | null,
       price: Infinity,
-      percent: 0,
+      percent: Infinity,
     };
     let bestSell = {
       faction: null as string | null,
       price: -Infinity,
-      percent: 0,
+      percent: -Infinity,
     };
 
     // Iterate through factions to find best buy/sell
@@ -45,10 +47,7 @@ function recommendTradeRoutes() {
 
       if (tradeData) {
         // Check for best buy: lowest price with the best discount (negative percentage)
-        if (
-          tradeData.buyPercent < 0 &&
-          tradeData.buyPercent < bestBuy.percent
-        ) {
+        if (tradeData.buyPercent < bestBuy.percent) {
           bestBuy = {
             faction: factionName,
             price: tradeData.buy,
@@ -57,10 +56,7 @@ function recommendTradeRoutes() {
         }
 
         // Check for best sell: highest price with the best premium (positive percentage)
-        if (
-          tradeData.sellPercent > 0 &&
-          tradeData.sellPercent > bestSell.percent
-        ) {
+        if (tradeData.sellPercent > bestSell.percent) {
           bestSell = {
             faction: factionName,
             price: tradeData.sell,
