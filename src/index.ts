@@ -44,7 +44,7 @@ function recommendTradeRoutes() {
     // Iterate through factions to find best buy/sell
     for (const factionName in factions) {
       const tradeData = factions[factionName][commodity];
-
+    
       if (tradeData) {
         // Check for best buy: lowest price with the best discount (negative percentage)
         if (tradeData.buyPercent < bestBuy.percent) {
