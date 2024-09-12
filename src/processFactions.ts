@@ -1,11 +1,7 @@
 import { loadImage } from "canvas";
 import { readdirSync } from "fs";
 import { join } from "path";
-import {
-  addToTable,
-  ensureDebugDirectoryExists,
-  extractTextFromImage,
-} from "./utils";
+import { ensureDebugDirectoryExists, extractTextFromImage } from "./utils";
 
 type RGB = [number, number, number];
 type PercentageColorRow = {
@@ -27,7 +23,6 @@ async function processAllImages() {
 
   for (const file of files) {
     const imagePath = join(imagesPath, file);
-    // console.log(`Processing image: ${imagePath}`);
     const factionName = file.replace(".png", "");
     const imageTable = await processImage(imagePath);
 
@@ -45,6 +40,9 @@ async function processImage(imagePath: string) {
   const image = await loadImage(imagePath);
 
   const table: {
+    rowIndex: number;
+    count1: string;
+    count2: string;
     sellProc: string;
     buyProc: string;
     sellPrice: string;
@@ -61,6 +59,11 @@ async function processImage(imagePath: string) {
 
   await Promise.all(percentagePromises);
 
+  // Sort the table based on rowIndex to maintain the correct order
+  table.sort((a, b) => a.rowIndex - b.rowIndex);
+
+  console.table(table);
+
   return table;
 }
 
@@ -69,6 +72,9 @@ async function handleRow(
   rowIndex: number,
   rowHeight: number,
   table: {
+    rowIndex: number;
+    count1: string;
+    count2: string;
     sellProc: string;
     buyProc: string;
     sellPrice: string;
@@ -122,16 +128,20 @@ async function handleRow(
     percPromise,
   ]);
 
-  const percentage1 = perc.split(" / ")[0];
-  const percentage2 = perc.split(" / ")[1];
-  const sellPrice = price.split(" / ")[0];
+  const percentage1 = perc.split("/")[0].trim();
+  const percentage2 = perc.split("/")[1].trim();
+  const sellPrice = price.split("/")[0].trim();
+  const buyPrice = price.split("/")[1].trim();
 
-  const buyPrice = price.split(" / ")[1];
-
-  await addToTable(count1, count2, price, perc, table);
-  if (rowIndex === 13) {
-    console.table(table);
-  }
+  table.push({
+    rowIndex,
+    count1,
+    count2,
+    sellProc: percentage1,
+    buyProc: percentage2,
+    sellPrice,
+    buyPrice,
+  });
 }
 
 // Run the function to process all images in the directory
