@@ -80,8 +80,8 @@ function recommendTradeRoutes() {
 
       // Update the best sell price if higher
       if (
-        !bestTradeRoutes[commodity].bestSellPrice ||
-        sellInAluminum > bestTradeRoutes[commodity].bestSellPrice
+        !bestTradeRoutes[commodity].bestSellPercentage ||
+        sellPercentage > bestTradeRoutes[commodity].bestSellPercentage
       ) {
         bestTradeRoutes[commodity].bestSellFaction = factionName;
         bestTradeRoutes[commodity].bestSellPrice = sellInAluminum;
@@ -92,8 +92,8 @@ function recommendTradeRoutes() {
 
       // Update the best buy price if lower
       if (
-        !bestTradeRoutes[commodity].bestBuyPrice ||
-        buyInAluminum < bestTradeRoutes[commodity].bestBuyPrice
+        !bestTradeRoutes[commodity].bestBuyPercentage ||
+        buyPercentage < bestTradeRoutes[commodity].bestBuyPercentage
       ) {
         bestTradeRoutes[commodity].bestBuyFaction = factionName;
         bestTradeRoutes[commodity].bestBuyPrice = buyInAluminum;
@@ -109,23 +109,21 @@ function recommendTradeRoutes() {
     const tradeInfo = bestTradeRoutes[commodity];
 
     if (tradeInfo && tradeInfo.bestBuyFaction && tradeInfo.bestSellFaction) {
-      const sellInfo = `
-      ${tradeInfo.bestSellPriceOG?.toFixed(2)} 
-      ${tradeInfo.bestSellCurrency} 
-      ${tradeInfo.bestSellPercentage?.toFixed(0)}% 
-      ${tradeInfo.bestSellFaction}`;
-
-      const buyInfo = `
-      ${tradeInfo.bestBuyPriceOG?.toFixed(2)}
-      ${tradeInfo.bestBuyCurrency}
-      ${tradeInfo.bestBuyPercentage?.toFixed(0)}%
-      ${tradeInfo.bestBuyFaction}`;
-
       // Add row to table
       const row = `<tr>
           <td>${commodity}</td>
-          <td>${sellInfo}</td>
-          <td>${buyInfo}</td>
+          <td></td>
+          <!-- Sell Info Columns -->
+          <td>${tradeInfo.bestSellPriceOG?.toFixed(2)}</td>
+          <td>${tradeInfo.bestSellPercentage?.toFixed(0)}%</td>
+          <td>${tradeInfo.bestSellFaction}</td>
+          <td>${tradeInfo.bestSellCurrency}</td>
+          <td></td>
+          <!-- Buy Info Columns -->
+          <td>${tradeInfo.bestBuyPriceOG?.toFixed(2)}</td>
+          <td>${tradeInfo.bestBuyPercentage?.toFixed(0)}%</td>
+          <td>${tradeInfo.bestBuyFaction}</td>
+          <td>${tradeInfo.bestBuyCurrency}</td>
       </tr>`;
       tableBody?.insertAdjacentHTML("beforeend", row);
     }
