@@ -104,7 +104,7 @@ const getAverageColor = (
 };
 
 // Main function to process the image and extract the table data
-const processImage = async (imagePath: string) => {
+async function processImage(imagePath: string) {
   const image = await loadImage(imagePath);
 
   const rows: PercentageColorRow[] = [];
@@ -200,7 +200,7 @@ const processImage = async (imagePath: string) => {
 
   // Output the sorted table
   console.table(sortedTable);
-};
+}
 
 // Run the function with your image path
-processImage("./images/colours.png");
+await processImage("./images/colours.png");
