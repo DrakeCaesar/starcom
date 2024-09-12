@@ -43,11 +43,11 @@ table {
         &.numeric {
           text-align: right;
         }
-
-        // Ensure the content fits the cells properly
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+        & {
+          // Ensure the content fits the cells properly
+          white-space: nowrap;
+          overflow: hidden;
+        }
       }
     }
   }
