@@ -11,14 +11,12 @@ type PercentageColorRow = {
   color2: RGB;
 };
 
-// Helper function to save the canvas section as an image for debugging
+// Helper function to save the canvas section as an image for debugging or pairing with percentages
 const saveCanvasAsImage = (canvas: any, filename: string) => {
   const out = fs.createWriteStream(path.join("./debug", filename));
   const stream = canvas.createPNGStream();
   stream.pipe(out);
 };
-
-// Helper function to extract percentage text
 
 // Initialize the Tesseract worker once
 const initializeTesseractWorker = async () => {
@@ -66,7 +64,8 @@ const extractTextFromImage = async (
 
   return text.trim();
 };
-// Helper function to get average color from a section of the image
+
+// Helper function to get average color from a section of the image and save the cropped image
 const getAverageColor = (
   image: any,
   x: number,
@@ -81,6 +80,9 @@ const getAverageColor = (
 
   // Crop the image properly by specifying the source region
   ctx.drawImage(image, x, y, width, height, 0, 0, width, height);
+
+  // Save the cropped image with its color for debugging or pairing with percentages
+  saveCanvasAsImage(canvas, `row-${rowIndex}-col-${colIndex}-color.png`);
 
   const imageData = ctx.getImageData(0, 0, width, height).data;
   let r = 0,
@@ -157,7 +159,7 @@ const processImage = async (imagePath: string) => {
 
           const y = 15 + i * rowHeight;
 
-          // Extract the colors
+          // Extract the colors and save their respective images
           const color1 = getAverageColor(image, 240, y, 30, 30, i, 1); // First column color
           const color2 = getAverageColor(image, 270, y, 30, 30, i, 2); // Second column color
 
