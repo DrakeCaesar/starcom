@@ -31,123 +31,106 @@ function recommendTradeRoutes() {
     tableBody.innerHTML = ""; // Clear previous routes
   }
 
-  // Object to store best trade info
-  const bestTradeRoutes: {
-    [commodity: string]: {
-      bestBuyFaction?: string;
-      bestBuyPrice?: number;
-      bestBuyPriceOG?: number;
-      bestBuyCurrency?: string;
-      bestBuyPercentage?: number;
+  // Array to store all trade combinations
+  const allTradeRoutes: {
+    commodity: string;
+    bestBuyFaction: string;
+    bestBuyPrice: number;
+    bestBuyPriceOG: number;
+    bestBuyCurrency: string;
+    bestBuyPercentage: number;
+    bestSellFaction: string;
+    bestSellPrice: number;
+    bestSellPriceOG: number;
+    bestSellCurrency: string;
+    bestSellPercentage: number;
+    profitPercentage: number;
+  }[] = [];
 
-      bestSellFaction?: string;
-      bestSellPrice?: number;
-      bestSellPriceOG?: number;
-      bestSellCurrency?: string;
-      bestSellPercentage?: number;
-    };
-  } = {};
+  // Iterate through each faction to get all trade combinations
+  for (const buyFactionName in factions) {
+    const buyFactionData = factions[buyFactionName];
+    const buyCurrencyRate = commodityRates[buyFactionData.currency];
 
-  // Iterate through each faction
-  for (const factionName in factions) {
-    const factionData = factions[factionName];
-    const factionCurrency = factionData.currency;
-    const currencyRate = commodityRates[factionCurrency];
+    for (const sellFactionName in factions) {
+      if (buyFactionName === sellFactionName) continue; // Skip if the buy and sell factions are the same
 
-    console.log(`Processing Faction: ${factionName} (${factionCurrency})`);
+      const sellFactionData = factions[sellFactionName];
+      const sellCurrencyRate = commodityRates[sellFactionData.currency];
 
-    // Iterate through commodities to calculate percentages based on the aluminum conversion
-    for (const commodity in commodityRates) {
-      const tradeData = factionData.commodities[commodity];
+      for (const commodity in commodityRates) {
+        const buyTradeData = buyFactionData.commodities[commodity];
+        const sellTradeData = sellFactionData.commodities[commodity];
 
-      if (!tradeData) {
-        continue;
-      }
+        if (!buyTradeData || !sellTradeData) continue; // Skip if no trade data for the commodity
 
-      // Convert buy and sell prices to aluminum equivalents
-      const sellInAluminum = tradeData.sell * currencyRate;
-      const buyInAluminum = tradeData.buy * currencyRate;
+        // Convert buy and sell prices to aluminum equivalents
+        const buyInAluminum = buyTradeData.buy * buyCurrencyRate;
+        const sellInAluminum = sellTradeData.sell * sellCurrencyRate;
 
-      // Calculate percentage difference for sell price
-      const sellPercentage =
-        (sellInAluminum / commodityRates[commodity] - 1) * 100;
+        // Calculate profit percentage
+        const profitPercentage = (sellInAluminum / buyInAluminum - 1) * 100;
 
-      const buyPercentage =
-        (buyInAluminum / commodityRates[commodity] - 1) * 100;
-
-      // Initialize if not existing in bestTradeRoutes
-      if (!bestTradeRoutes[commodity]) {
-        bestTradeRoutes[commodity] = {};
-      }
-
-      // Update the best sell price if higher
-      if (
-        !bestTradeRoutes[commodity].bestSellPercentage ||
-        sellPercentage > bestTradeRoutes[commodity].bestSellPercentage
-      ) {
-        bestTradeRoutes[commodity].bestSellFaction = factionName;
-        bestTradeRoutes[commodity].bestSellPrice = sellInAluminum;
-        bestTradeRoutes[commodity].bestSellPriceOG = tradeData.sell;
-        bestTradeRoutes[commodity].bestSellCurrency = factionCurrency;
-        bestTradeRoutes[commodity].bestSellPercentage = sellPercentage;
-      }
-
-      // Update the best buy price if lower
-      if (
-        !bestTradeRoutes[commodity].bestBuyPercentage ||
-        buyPercentage < bestTradeRoutes[commodity].bestBuyPercentage
-      ) {
-        bestTradeRoutes[commodity].bestBuyFaction = factionName;
-        bestTradeRoutes[commodity].bestBuyPrice = buyInAluminum;
-        bestTradeRoutes[commodity].bestBuyPriceOG = tradeData.buy;
-        bestTradeRoutes[commodity].bestBuyCurrency = factionCurrency;
-        bestTradeRoutes[commodity].bestBuyPercentage = buyPercentage;
+        // Store the trade combination with calculated profit
+        allTradeRoutes.push({
+          commodity,
+          bestBuyFaction: buyFactionName,
+          bestBuyPrice: buyInAluminum,
+          bestBuyPriceOG: buyTradeData.buy,
+          bestBuyCurrency: buyFactionData.currency,
+          bestBuyPercentage:
+            (buyInAluminum / commodityRates[commodity] - 1) * 100,
+          bestSellFaction: sellFactionName,
+          bestSellPrice: sellInAluminum,
+          bestSellPriceOG: sellTradeData.sell,
+          bestSellCurrency: sellFactionData.currency,
+          bestSellPercentage:
+            (sellInAluminum / commodityRates[commodity] - 1) * 100,
+          profitPercentage,
+        });
       }
     }
   }
 
-  // Now display the best trade routes, in the same order as commodityRates
-  for (const commodity in commodityRates) {
-    const tradeInfo = bestTradeRoutes[commodity];
+  // Sort all trade routes by profit percentage in descending order
+  allTradeRoutes.sort((a, b) => b.profitPercentage - a.profitPercentage);
 
-    if (tradeInfo && tradeInfo.bestBuyFaction && tradeInfo.bestSellFaction) {
-      // Add row to table with background images for currencies
-      // Add row to table with background images for currencies
-      const profit =
-        (tradeInfo?.bestSellPrice! / tradeInfo?.bestBuyPrice!) * 100;
-      const formattedProfit =
-        profit > 100
-          ? `+${(profit - 100).toFixed(2)}`
-          : `-${(100 - profit).toFixed(2)}`;
+  // Now display the sorted trade routes
+  allTradeRoutes.forEach((tradeInfo) => {
+    const profit =
+      tradeInfo.profitPercentage > 0
+        ? `+${tradeInfo.profitPercentage.toFixed(2)}%`
+        : `${tradeInfo.profitPercentage.toFixed(2)}%`;
 
-      const row = `<tr>
-           <td>${commodity}</td>
-           <td class="currency" style="background-image: url('./images/${commodity}.png');"></td>
-           <td class="empty"></td>
-           
-           <!-- Sell Info Columns -->
-           <td>${tradeInfo.bestSellPriceOG?.toFixed(2)}</td>
-           <td>${tradeInfo.bestSellPercentage?.toFixed(0)}%</td>
-           <td>${tradeInfo.bestSellFaction}</td>
-           <td>${tradeInfo.bestSellCurrency}</td>
-           <td class="currency" style="background-image: url('./images/${
-             tradeInfo.bestSellCurrency
-           }.png');">
-                      <td class="empty"></td>
+    const row = `<tr>
+         <td>${tradeInfo.commodity}</td>
+         <td class="currency" style="background-image: url('./images/commodities/${
+           tradeInfo.commodity
+         }.png');"></td>
+         <td class="empty"></td>
 
- 
-           <!-- Buy Info Columns -->
-           <td>${tradeInfo.bestBuyPriceOG?.toFixed(2)}</td>
-           <td>${tradeInfo.bestBuyPercentage?.toFixed(0)}%</td>
-           <td>${tradeInfo.bestBuyFaction}</td>
-           <td>${tradeInfo.bestBuyCurrency}</td>
-           <td class="currency" style="background-image: url('./images/${
-             tradeInfo.bestSellCurrency
-           }.png');">
-           </td></td>
-            <td>${formattedProfit}%</td>
-       </tr>`;
-      tableBody?.insertAdjacentHTML("beforeend", row);
-    }
-  }
+         <!-- Sell Info Columns -->
+         <td>${tradeInfo.bestSellPriceOG.toFixed(2)}</td>
+         <td>${tradeInfo.bestSellPercentage.toFixed(0)}%</td>
+         <td>${tradeInfo.bestSellFaction}</td>
+         <td>${tradeInfo.bestSellCurrency}</td>
+         <td class="currency" style="background-image: url('./images/commodities/${
+           tradeInfo.bestSellCurrency
+         }.png');"></td>
+         <td class="empty"></td>
+
+         <!-- Buy Info Columns -->
+         <td>${tradeInfo.bestBuyPriceOG.toFixed(2)}</td>
+         <td>${tradeInfo.bestBuyPercentage.toFixed(0)}%</td>
+         <td>${tradeInfo.bestBuyFaction}</td>
+         <td>${tradeInfo.bestBuyCurrency}</td>
+         <td class="currency" style="background-image: url('./images/commodities/${
+           tradeInfo.bestBuyCurrency
+         }.png');"></td>
+         
+         <!-- Profit Column -->
+         <td>${profit}</td>
+     </tr>`;
+    tableBody?.insertAdjacentHTML("beforeend", row);
+  });
 }
