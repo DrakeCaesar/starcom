@@ -9,6 +9,8 @@ body {
   font-family: $font-family;
   background-color: $bg-color;
   color: $text-color;
+  margin-top: 5vh;
+  border: none;
 }
 
 // Container to ensure full responsiveness and centering
@@ -53,6 +55,7 @@ table {
       }
 
       td {
+        border: 1px solid $border-color;
         font-size: 24px;
         padding: 15px;
         vertical-align: middle;
@@ -115,22 +118,17 @@ table {
   margin: auto;
   padding: 50px;
 }
-table,
-th,
-td {
-  border: 1px solid $border-color;
-}
-
-.currency {
+.currency,
+.avatar {
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
-  min-width: 6vh;
+  min-width: 5vh;
   background-color: $highlight-color;
 }
 
 .empty {
   background-color: $highlight-color;
   border: none;
-  padding: 3vh;
+  padding: 2.5vh;
 }

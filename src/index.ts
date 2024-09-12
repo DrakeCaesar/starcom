@@ -103,33 +103,59 @@ function recommendTradeRoutes() {
         : `${tradeInfo.profitPercentage.toFixed(2)}%`;
 
     const row = `<tr>
-         <td>${tradeInfo.commodity}</td>
-         <td class="currency" style="background-image: url('./images/commodities/${
-           tradeInfo.commodity
-         }.png');"></td>
-         <td class="empty"></td>
+        <td>${tradeInfo.commodity}</td>
+        
+        <td class="currency" style="background-image: url('./images/commodities/${
+          tradeInfo.commodity
+        }.png');"></td>
+        <td class="empty"></td>
 
-         <!-- Sell Info Columns -->
-         <td>${tradeInfo.bestSellPriceOG.toFixed(2)}</td>
-         <td>${tradeInfo.bestSellPercentage.toFixed(0)}%</td>
-         <td>${tradeInfo.bestSellFaction}</td>
-         <td>${tradeInfo.bestSellCurrency}</td>
-         <td class="currency" style="background-image: url('./images/commodities/${
-           tradeInfo.bestSellCurrency
-         }.png');"></td>
-         <td class="empty"></td>
+        
+        <!-- Sell Info Columns -->
 
-         <!-- Buy Info Columns -->
-         <td>${tradeInfo.bestBuyPriceOG.toFixed(2)}</td>
-         <td>${tradeInfo.bestBuyPercentage.toFixed(0)}%</td>
-         <td>${tradeInfo.bestBuyFaction}</td>
-         <td>${tradeInfo.bestBuyCurrency}</td>
-         <td class="currency" style="background-image: url('./images/commodities/${
-           tradeInfo.bestBuyCurrency
-         }.png');"></td>
+        <td>${tradeInfo.bestSellFaction}</td>
+        
+        <td class="avatar" style="background-image: url('./images/avatars/${
+          tradeInfo.bestSellFaction
+        }.png');"></td>
+        
+        <td>${tradeInfo.bestSellPriceOG.toFixed(2)}</td>
+        
+        <!-- <td>${tradeInfo.bestSellCurrency}</td> -->
          
-         <!-- Profit Column -->
-         <td>${profit}</td>
+        
+        <td class="currency" style="background-image: url('./images/commodities/${
+          tradeInfo.bestSellCurrency
+        }.png');"></td>
+        
+        <td>${tradeInfo.bestSellPercentage.toFixed(0)}%</td>
+        
+        <td class="empty"></td>
+        
+        
+
+        <!-- Buy Info Columns -->
+        <td>${tradeInfo.bestBuyFaction}</td>
+        
+        <td class="avatar" style="background-image: url('./images/avatars/${
+          tradeInfo.bestBuyFaction
+        }.png');"></td>
+        
+        <td>${tradeInfo.bestBuyPriceOG.toFixed(2)}</td>
+        
+        <!-- <td>${tradeInfo.bestBuyCurrency}</td> -->
+        
+        <td class="currency" style="background-image: url('./images/commodities/${
+          tradeInfo.bestBuyCurrency
+        }.png');"></td>
+        
+        <td>${tradeInfo.bestBuyPercentage.toFixed(0)}%</td>
+        
+        <td class="empty"></td>
+        
+        
+        <!-- Profit Column -->
+        <td>${profit}</td>
      </tr>`;
     tableBody?.insertAdjacentHTML("beforeend", row);
   });
