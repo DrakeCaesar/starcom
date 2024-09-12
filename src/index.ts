@@ -113,6 +113,13 @@ function recommendTradeRoutes() {
     if (tradeInfo && tradeInfo.bestBuyFaction && tradeInfo.bestSellFaction) {
       // Add row to table with background images for currencies
       // Add row to table with background images for currencies
+      const profit =
+        (tradeInfo?.bestSellPrice! / tradeInfo?.bestBuyPrice!) * 100;
+      const formattedProfit =
+        profit > 100
+          ? `+${(profit - 100).toFixed(2)}`
+          : `-${(100 - profit).toFixed(2)}`;
+
       const row = `<tr>
            <td>${commodity}</td>
            <td class="currency" style="background-image: url('./images/${commodity}.png');"></td>
@@ -138,6 +145,7 @@ function recommendTradeRoutes() {
              tradeInfo.bestSellCurrency
            }.png');">
            </td></td>
+            <td>${formattedProfit}%</td>
        </tr>`;
       tableBody?.insertAdjacentHTML("beforeend", row);
     }
