@@ -115,20 +115,16 @@ function recommendTradeRoutes() {
       // Add row to table with background images for currencies
       const row = `<tr>
            <td>${commodity}</td>
-           <td></td>
+                      <td class="currency" style="background-image: url('./images/${commodity}.png');">
            
            <!-- Sell Info Columns -->
            <td>${tradeInfo.bestSellPriceOG?.toFixed(2)}</td>
            <td>${tradeInfo.bestSellPercentage?.toFixed(0)}%</td>
            <td>${tradeInfo.bestSellFaction}</td>
            <td>${tradeInfo.bestSellCurrency}</td>
-           <td style="background-image: url('./images/${
+           <td class="currency" style="background-image: url('./images/${
              tradeInfo.bestSellCurrency
-           }.png'); 
-           background-size: contain; 
-           background-repeat: no-repeat; 
-           background-position: center; 
-           padding: 20px;">
+           }.png');">
            </td>
  
            <!-- Buy Info Columns -->
@@ -136,13 +132,9 @@ function recommendTradeRoutes() {
            <td>${tradeInfo.bestBuyPercentage?.toFixed(0)}%</td>
            <td>${tradeInfo.bestBuyFaction}</td>
            <td>${tradeInfo.bestBuyCurrency}</td>
-           <td style="background-image: url('./images/${
+           <td class="currency" style="background-image: url('./images/${
              tradeInfo.bestSellCurrency
-           }.png'); 
-           background-size: contain; 
-           background-repeat: no-repeat; 
-           background-position: center; 
-           padding: 20px;">
+           }.png');">
            </td>
        </tr>`;
       tableBody?.insertAdjacentHTML("beforeend", row);
