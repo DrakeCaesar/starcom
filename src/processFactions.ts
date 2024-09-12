@@ -1,5 +1,7 @@
 import { loadImage } from "canvas";
+import * as fs from "fs";
 import { readdirSync } from "fs";
+
 import { join } from "path";
 import { ensureDebugDirectoryExists, extractTextFromImage } from "./utils";
 
@@ -12,6 +14,9 @@ type PercentageColorRow = {
   sellPrice: string;
   buyPrice: string;
 };
+
+// empty debug directory
+fs.rmdirSync("./debug", { recursive: true });
 
 async function processAllImages() {
   const imagesPath = "./images/data/";

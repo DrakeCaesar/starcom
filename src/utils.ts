@@ -1,4 +1,4 @@
-import { createCanvas } from "canvas";
+import { CanvasRenderingContext2D, createCanvas } from "canvas";
 import * as fs from "fs";
 import * as path from "path";
 import Tesseract, { createWorker } from "tesseract.js";
@@ -30,8 +30,12 @@ export async function extractTextFromImage(
   }
 
   const canvas = createCanvas(width, height);
-  const ctx = canvas.getContext("2d");
+  const ctx: CanvasRenderingContext2D = canvas.getContext("2d");
   ctx.drawImage(image, x, y, width, height, 0, 0, width, height);
+
+  // Invert the colors of the canvas
+  // invertCanvasColors(ctx, width, height);
+
   await saveCanvasAsImage(
     canvas,
     `row-${rowIndex}-col-${colIndex}-${x}-${y}-text.png`,
@@ -43,6 +47,24 @@ export async function extractTextFromImage(
   } = await tesseractWorker.recognize(buffer);
 
   return text.trim();
+}
+
+function invertCanvasColors(
+  ctx: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+) {
+  const imageData = ctx.getImageData(0, 0, width, height);
+  const data = imageData.data;
+
+  for (let i = 0; i < data.length; i += 4) {
+    data[i] = 255 - data[i]; // Red
+    data[i + 1] = 255 - data[i + 1]; // Green
+    data[i + 2] = 255 - data[i + 2]; // Blue
+    // Alpha (data[i + 3]) remains the same
+  }
+
+  ctx.putImageData(imageData, 0, 0);
 }
 
 export async function saveCanvasAsImage(
@@ -59,7 +81,6 @@ export async function saveCanvasAsImage(
     out.on("error", reject);
   });
 }
-
 type RGB = [number, number, number];
 export async function getAverageColor(
   image: any,
