@@ -9,7 +9,7 @@ let tesseractWorker: any = null;
 export async function initializeTesseractWorker() {
   const worker = await createWorker();
   await worker.setParameters({
-    tessedit_char_whitelist: "0123456789+-%",
+    tessedit_char_whitelist: "0123456789+-% /.",
     tessedit_pageseg_mode: Tesseract.PSM.SINGLE_LINE,
   });
   return worker;
@@ -122,6 +122,26 @@ export async function handleColorExtractionAndAddToTable(
     firstColor: `rgb(${color1[0]}, ${color1[1]}, ${color1[2]})`,
     secondPercentage: percentage2,
     secondColor: `rgb(${color2[0]}, ${color2[1]}, ${color2[2]})`,
+  });
+}
+
+export async function addToTable(
+  count1: string,
+  count2: string,
+  price: string,
+  perc: string,
+  table: {
+    sellProc: string;
+    buyProc: string;
+    sellPrice: string;
+    buyPrice: string;
+  }[],
+) {
+  table.push({
+    sellProc: count1,
+    buyProc: count2,
+    sellPrice: price,
+    buyPrice: perc,
   });
 }
 

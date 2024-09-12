@@ -2,11 +2,9 @@ import { loadImage } from "canvas";
 import { readdirSync } from "fs";
 import { join } from "path";
 import {
-  cleanPercentage,
+  addToTable,
   ensureDebugDirectoryExists,
   extractTextFromImage,
-  handleColorExtractionAndAddToTable,
-  sortTableByPercentages,
 } from "./utils";
 
 type RGB = [number, number, number];
@@ -29,7 +27,7 @@ async function processAllImages() {
 
   for (const file of files) {
     const imagePath = join(imagesPath, file);
-    console.log(`Processing image: ${imagePath}`);
+    // console.log(`Processing image: ${imagePath}`);
     const factionName = file.replace(".png", "");
     const imageTable = await processImage(imagePath);
 
@@ -40,22 +38,20 @@ async function processAllImages() {
     break;
   }
 
-  console.log(JSON.stringify(allFactionsData, null, 2));
+  // console.log(JSON.stringify(allFactionsData, null, 2));
 }
 
 async function processImage(imagePath: string) {
   const image = await loadImage(imagePath);
 
   const table: {
-    firstPercentage: string;
-    firstColor: string;
-    secondPercentage: string;
-    secondColor: string;
+    sellProc: string;
+    buyProc: string;
     sellPrice: string;
     buyPrice: string;
   }[] = [];
 
-  const rowHeight = 86;
+  const rowHeight = 43;
   const numRows = 14;
   const percentagePromises = [];
 
@@ -65,8 +61,7 @@ async function processImage(imagePath: string) {
 
   await Promise.all(percentagePromises);
 
-  const sortedTable = sortTableByPercentages(table);
-  return sortedTable;
+  return table;
 }
 
 async function handleRow(
@@ -74,72 +69,72 @@ async function handleRow(
   rowIndex: number,
   rowHeight: number,
   table: {
-    firstPercentage: string;
-    firstColor: string;
-    secondPercentage: string;
-    secondColor: string;
+    sellProc: string;
+    buyProc: string;
     sellPrice: string;
     buyPrice: string;
   }[],
 ) {
-  const percentage1Promise = extractTextFromImage(
+  const count1Promise = extractTextFromImage(
     image,
+    422,
+    324 + rowIndex * rowHeight,
+    62,
+    14,
+    rowIndex,
     0,
-    rowIndex * rowHeight,
-    115,
-    60,
+  );
+
+  const count2Promise = extractTextFromImage(
+    image,
+    570,
+    324 + rowIndex * rowHeight,
+    62,
+    14,
     rowIndex,
     1,
   );
-  const percentage2Promise = extractTextFromImage(
+
+  const pricePromise = extractTextFromImage(
     image,
-    115,
-    rowIndex * rowHeight,
-    120,
-    60,
+    763,
+    325 + rowIndex * rowHeight,
+    110,
+    14,
     rowIndex,
-    2,
+    1,
   );
 
-  const sellPricePromise = extractTextFromImage(
+  const percPromise = extractTextFromImage(
     image,
-    235,
-    rowIndex * rowHeight,
-    120,
-    60,
+    873,
+    325 + rowIndex * rowHeight,
+    140,
+    14,
     rowIndex,
-    3,
-  );
-  const buyPricePromise = extractTextFromImage(
-    image,
-    355,
-    rowIndex * rowHeight,
-    120,
-    60,
-    rowIndex,
-    4,
+    1,
   );
 
-  const [percentage1, percentage2, sellPrice, buyPrice] = await Promise.all([
-    percentage1Promise,
-    percentage2Promise,
-    sellPricePromise,
-    buyPricePromise,
+  const [count1, count2, price, perc] = await Promise.all([
+    count1Promise,
+    count2Promise,
+    pricePromise,
+    percPromise,
   ]);
 
-  await handleColorExtractionAndAddToTable(
-    image,
-    rowIndex,
-    rowHeight,
-    cleanPercentage(percentage1),
-    cleanPercentage(percentage2),
-    table,
-  );
+  const percentage1 = perc.split(" / ")[0];
+  const percentage2 = perc.split(" / ")[1];
+  const sellPrice = price.split(" / ")[0];
 
-  table[rowIndex].sellPrice = sellPrice;
-  table[rowIndex].buyPrice = buyPrice;
+  const buyPrice = price.split(" / ")[1];
+
+  await addToTable(count1, count2, price, perc, table);
+  if (rowIndex === 13) {
+    console.table(table);
+  }
 }
 
 // Run the function to process all images in the directory
 await processAllImages();
+
 process.exit(0);
