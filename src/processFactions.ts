@@ -43,10 +43,10 @@ async function processImage(imagePath: string) {
     rowIndex: number;
     count1: string;
     count2: string;
-    sellProc: string;
-    buyProc: string;
     sellPrice: string;
     buyPrice: string;
+    sellProc: string;
+    buyProc: string;
   }[] = [];
 
   const rowHeight = 43;
@@ -75,10 +75,10 @@ async function handleRow(
     rowIndex: number;
     count1: string;
     count2: string;
-    sellProc: string;
-    buyProc: string;
     sellPrice: string;
     buyPrice: string;
+    sellProc: string;
+    buyProc: string;
   }[],
 ) {
   const count1Promise = extractTextFromImage(
@@ -137,10 +137,10 @@ async function handleRow(
     rowIndex,
     count1,
     count2,
-    sellProc: percentage1,
-    buyProc: percentage2,
     sellPrice,
     buyPrice,
+    sellProc: percentage1,
+    buyProc: percentage2,
   });
 }
 
