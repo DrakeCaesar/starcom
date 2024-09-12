@@ -31,7 +31,9 @@ const extractTextFromImage = async (
 ): Promise<string> => {
   const canvas = createCanvas(width, height);
   const ctx = canvas.getContext("2d");
-  ctx.drawImage(image, x, y, width, height);
+
+  // Crop the image properly by specifying the source region
+  ctx.drawImage(image, x, y, width, height, 0, 0, width, height);
 
   // Save the cropped image for debugging
   saveCanvasAsImage(canvas, `row-${rowIndex}-col-${colIndex}-text.png`);
@@ -58,10 +60,12 @@ const getAverageColor = (
 ): RGB => {
   const canvas = createCanvas(width, height);
   const ctx = canvas.getContext("2d");
-  ctx.drawImage(image, x, y, width, height);
+
+  // Crop the image properly by specifying the source region
+  ctx.drawImage(image, x, y, width, height, 0, 0, width, height);
 
   // Save the cropped image for debugging
-  saveCanvasAsImage(canvas, `row-${rowIndex}-col-${colIndex}-color.png`);
+  saveCanvasAsImage(canvas, `row-${rowIndex}-col-${colIndex}-text-color.png`);
 
   const imageData = ctx.getImageData(0, 0, width, height).data;
   let r = 0,
@@ -95,45 +99,55 @@ const processImage = async (imagePath: string) => {
     fs.mkdirSync("./debug");
   }
 
+  const table = [];
   for (let i = 0; i < numRows; i++) {
-    const y = 25 + i * rowHeight;
-
-    // Extract the first and second percentages
-    const percentage1 = await extractTextFromImage(
+    // Extract the first and second percentages, cropped properly
+    let percentage1 = await extractTextFromImage(
       image,
-      0,
-      rowHeight * i,
-      110,
-      60,
+      0, // source x
+      i * rowHeight, // source y (starting point for this row)
+      115, // width of the cropped area
+      60, // height of the cropped area
       i,
       1,
     );
-    const percentage2 = await extractTextFromImage(
+    let percentage2 = await extractTextFromImage(
       image,
-      110,
-      rowHeight * i,
-      60,
-      40,
+      115, // source x
+      i * rowHeight, // source y (same row)
+      120, // width of the cropped area
+      60, // height of the cropped area
       i,
       2,
     );
 
-    // Extract the colors
-    const color1 = getAverageColor(image, 255, y, 30, 30, i, 1); // First column color
-    const color2 = getAverageColor(image, 285, y, 30, 30, i, 2); // Second column color
+    // Clean up the extracted percentages
+    const cleanPercentage = (percentage: string) => {
+      const match = percentage.match(/[+-]\d+%/);
+      return match ? match[0] : percentage;
+    };
 
-    rows.push({ percentage1, percentage2, color1, color2 });
+    percentage1 = cleanPercentage(percentage1);
+    percentage2 = cleanPercentage(percentage2);
+
+    const y = 15 + i * rowHeight;
+
+    // Extract the colors
+    const color1 = getAverageColor(image, 240, y, 30, 30, i, 1); // First column color
+    const color2 = getAverageColor(image, 270, y, 30, 30, i, 2); // Second column color
+
+    // Add the data to the table
+    table.push({
+      index: i,
+      firstPercentage: percentage1,
+      secondPercentage: percentage2,
+      firstColor: color1,
+      secondColor: color2,
+    });
   }
 
-  // Print the table to the console
-  console.table(
-    rows.map((row) => ({
-      "First Percentage": row.percentage1,
-      "Second Percentage": row.percentage2,
-      "First Color": `rgb(${row.color1[0]}, ${row.color1[1]}, ${row.color1[2]})`,
-      "Second Color": `rgb(${row.color2[0]}, ${row.color2[1]}, ${row.color2[2]})`,
-    })),
-  );
+  // Output the table
+  console.table(table);
 };
 
 // Run the function with your image path
