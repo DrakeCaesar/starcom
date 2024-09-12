@@ -36,7 +36,7 @@ async function initializeTesseractWorker() {
 // Save this worker to reuse across function calls
 let tesseractWorker: any = null;
 
-const extractTextFromImage = async (
+async function extractTextFromImage(
   image: any,
   x: number,
   y: number,
@@ -44,7 +44,7 @@ const extractTextFromImage = async (
   height: number,
   rowIndex: number,
   colIndex: number,
-): Promise<string> => {
+): Promise<string> {
   // Initialize the Tesseract worker if it hasn't been initialized yet
   if (!tesseractWorker) {
     tesseractWorker = await initializeTesseractWorker();
@@ -68,7 +68,7 @@ const extractTextFromImage = async (
   } = await tesseractWorker.recognize(buffer);
 
   return text.trim();
-};
+}
 
 // Helper function to get average color from a section of the image and save the cropped image
 async function getAverageColor(
