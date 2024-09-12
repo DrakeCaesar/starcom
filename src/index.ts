@@ -109,21 +109,33 @@ function recommendTradeRoutes() {
     const tradeInfo = bestTradeRoutes[commodity];
 
     if (tradeInfo && tradeInfo.bestBuyFaction && tradeInfo.bestSellFaction) {
-      // Add row to table
+      // Add row to table with background images for currencies
       const row = `<tr>
           <td>${commodity}</td>
           <td></td>
+          
           <!-- Sell Info Columns -->
           <td>${tradeInfo.bestSellPriceOG?.toFixed(2)}</td>
           <td>${tradeInfo.bestSellPercentage?.toFixed(0)}%</td>
           <td>${tradeInfo.bestSellFaction}</td>
-          <td>${tradeInfo.bestSellCurrency}</td>
+          <td style="background-image: url('./images/${
+            tradeInfo.bestSellCurrency
+          }.png'); 
+                     background-size: contain; background-repeat: no-repeat; padding: 20px;">
+            ${tradeInfo.bestSellCurrency}
+          </td>
           <td></td>
+
           <!-- Buy Info Columns -->
           <td>${tradeInfo.bestBuyPriceOG?.toFixed(2)}</td>
           <td>${tradeInfo.bestBuyPercentage?.toFixed(0)}%</td>
           <td>${tradeInfo.bestBuyFaction}</td>
-          <td>${tradeInfo.bestBuyCurrency}</td>
+          <td style="background-image: url('./images/${
+            tradeInfo.bestBuyCurrency
+          }.png'); 
+                     background-size: contain; background-repeat: no-repeat; padding: 20px;">
+            ${tradeInfo.bestBuyCurrency}
+          </td>
       </tr>`;
       tableBody?.insertAdjacentHTML("beforeend", row);
     }
