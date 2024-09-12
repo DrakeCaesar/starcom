@@ -16,7 +16,7 @@ const saveCanvasAsImage = (canvas: any, filename: string) => {
   const out = fs.createWriteStream(path.join("./debug", filename));
   const stream = canvas.createPNGStream();
   stream.pipe(out);
-  out.on("finish", () => console.log(`Saved ${filename}`));
+  // out.on("finish", () => console.log(`Saved ${filename}`));
 };
 
 // Helper function to extract percentage text
@@ -42,7 +42,7 @@ const extractTextFromImage = async (
   const buffer = canvas.toBuffer("image/png");
 
   const result = await Tesseract.recognize(buffer, "eng", {
-    logger: (m) => console.log(m),
+    // logger: (m) => console.log(m),
   });
 
   return result.data.text.trim();
