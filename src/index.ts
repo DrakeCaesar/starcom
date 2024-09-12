@@ -1,4 +1,8 @@
+import { factions } from "./factions";
+import "./styles.scss";
+
 // Commodities and conversion rates (Aluminum = 1.0)
+
 const commodityRates: { [key: string]: number } = {
   Aluminum: 1.0,
   Copper: 1.5,
@@ -16,8 +20,6 @@ const commodityRates: { [key: string]: number } = {
   Xenium: 200.0,
   Adamantine: 500.0,
 };
-
-import { factions } from "./factions";
 
 console.clear();
 
@@ -110,33 +112,39 @@ function recommendTradeRoutes() {
 
     if (tradeInfo && tradeInfo.bestBuyFaction && tradeInfo.bestSellFaction) {
       // Add row to table with background images for currencies
+      // Add row to table with background images for currencies
       const row = `<tr>
-          <td>${commodity}</td>
-          <td></td>
-          
-          <!-- Sell Info Columns -->
-          <td>${tradeInfo.bestSellPriceOG?.toFixed(2)}</td>
-          <td>${tradeInfo.bestSellPercentage?.toFixed(0)}%</td>
-          <td>${tradeInfo.bestSellFaction}</td>
-          <td style="background-image: url('./images/${
-            tradeInfo.bestSellCurrency
-          }.png'); 
-                     background-size: contain; background-repeat: no-repeat; padding: 20px;">
-            ${tradeInfo.bestSellCurrency}
-          </td>
-          <td></td>
-
-          <!-- Buy Info Columns -->
-          <td>${tradeInfo.bestBuyPriceOG?.toFixed(2)}</td>
-          <td>${tradeInfo.bestBuyPercentage?.toFixed(0)}%</td>
-          <td>${tradeInfo.bestBuyFaction}</td>
-          <td style="background-image: url('./images/${
-            tradeInfo.bestBuyCurrency
-          }.png'); 
-                     background-size: contain; background-repeat: no-repeat; padding: 20px;">
-            ${tradeInfo.bestBuyCurrency}
-          </td>
-      </tr>`;
+           <td>${commodity}</td>
+           <td></td>
+           
+           <!-- Sell Info Columns -->
+           <td>${tradeInfo.bestSellPriceOG?.toFixed(2)}</td>
+           <td>${tradeInfo.bestSellPercentage?.toFixed(0)}%</td>
+           <td>${tradeInfo.bestSellFaction}</td>
+           <td>${tradeInfo.bestSellCurrency}</td>
+           <td style="background-image: url('./images/${
+             tradeInfo.bestSellCurrency
+           }.png'); 
+           background-size: contain; 
+           background-repeat: no-repeat; 
+           background-position: center; 
+           padding: 20px;">
+           </td>
+ 
+           <!-- Buy Info Columns -->
+           <td>${tradeInfo.bestBuyPriceOG?.toFixed(2)}</td>
+           <td>${tradeInfo.bestBuyPercentage?.toFixed(0)}%</td>
+           <td>${tradeInfo.bestBuyFaction}</td>
+           <td>${tradeInfo.bestBuyCurrency}</td>
+           <td style="background-image: url('./images/${
+             tradeInfo.bestSellCurrency
+           }.png'); 
+           background-size: contain; 
+           background-repeat: no-repeat; 
+           background-position: center; 
+           padding: 20px;">
+           </td>
+       </tr>`;
       tableBody?.insertAdjacentHTML("beforeend", row);
     }
   }
