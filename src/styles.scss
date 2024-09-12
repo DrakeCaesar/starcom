@@ -37,7 +37,6 @@ table {
     th {
       text-align: left;
       padding: 10px;
-      border-bottom: 1px solid $border-color;
       color: lighten($text-color, 10%);
       font-weight: bold;
     }
@@ -54,9 +53,8 @@ table {
       }
 
       td {
-        font-size: 30px;
+        font-size: 27px;
         padding: 15px;
-        border-bottom: 1px solid $border-color;
         vertical-align: middle;
         text-align: left;
 
@@ -129,4 +127,10 @@ td {
   background-position: center;
   min-width: 6vh;
   background-color: $highlight-color;
+}
+
+.empty {
+  background-color: $highlight-color;
+  border: none;
+  padding: 3vh;
 }
