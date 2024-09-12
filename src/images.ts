@@ -11,22 +11,27 @@ type PercentageColorRow = {
   color2: RGB;
 };
 
-// Helper function to save the canvas section as an image for debugging or pairing with percentages
-const saveCanvasAsImage = (canvas: any, filename: string) => {
-  const out = fs.createWriteStream(path.join("./debug", filename));
-  const stream = canvas.createPNGStream();
-  stream.pipe(out);
-};
+async function saveCanvasAsImage(canvas: any, filename: string): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const out = fs.createWriteStream(path.join("./debug", filename));
+    const stream = canvas.createPNGStream();
+
+    stream.pipe(out);
+
+    out.on("finish", resolve);
+    out.on("error", reject);
+  });
+}
 
 // Initialize the Tesseract worker once
-const initializeTesseractWorker = async () => {
+async function initializeTesseractWorker() {
   const worker = await createWorker();
   await worker.setParameters({
     tessedit_char_whitelist: "0123456789+-%",
     tessedit_pageseg_mode: Tesseract.PSM.SINGLE_LINE,
   });
   return worker;
-};
+}
 
 // Save this worker to reuse across function calls
 let tesseractWorker: any = null;
@@ -52,7 +57,7 @@ const extractTextFromImage = async (
   ctx.drawImage(image, x, y, width, height, 0, 0, width, height);
 
   // Save the cropped image for debugging (optional)
-  saveCanvasAsImage(canvas, `row-${rowIndex}-col-${colIndex}-text.png`);
+  await saveCanvasAsImage(canvas, `row-${rowIndex}-col-${colIndex}-text.png`);
 
   // Convert the canvas to a Buffer for Tesseract
   const buffer = canvas.toBuffer("image/png");
@@ -66,7 +71,7 @@ const extractTextFromImage = async (
 };
 
 // Helper function to get average color from a section of the image and save the cropped image
-const getAverageColor = (
+async function getAverageColor(
   image: any,
   x: number,
   y: number,
@@ -74,7 +79,7 @@ const getAverageColor = (
   height: number,
   rowIndex: number,
   colIndex: number,
-): RGB => {
+): Promise<RGB> {
   const canvas = createCanvas(width, height);
   const ctx = canvas.getContext("2d");
 
@@ -82,7 +87,7 @@ const getAverageColor = (
   ctx.drawImage(image, x, y, width, height, 0, 0, width, height);
 
   // Save the cropped image with its color for debugging or pairing with percentages
-  saveCanvasAsImage(canvas, `row-${rowIndex}-col-${colIndex}-color.png`);
+  await saveCanvasAsImage(canvas, `row-${rowIndex}-col-${colIndex}-color.png`);
 
   const imageData = ctx.getImageData(0, 0, width, height).data;
   let r = 0,
@@ -101,7 +106,7 @@ const getAverageColor = (
     Math.floor(g / totalPixels),
     Math.floor(b / totalPixels),
   ];
-};
+}
 
 // Main function to process the image and extract the table data
 async function processImage(imagePath: string) {
@@ -160,8 +165,8 @@ async function processImage(imagePath: string) {
           const y = 15 + i * rowHeight;
 
           // Extract the colors and save their respective images
-          const color1 = getAverageColor(image, 240, y, 30, 30, i, 1); // First column color
-          const color2 = getAverageColor(image, 270, y, 30, 30, i, 2); // Second column color
+          const color1 = await getAverageColor(image, 240, y, 30, 30, i, 1); // First column color
+          const color2 = await getAverageColor(image, 270, y, 30, 30, i, 2); // Second column color
 
           // Add the data to the table
           table.push({
@@ -204,3 +209,4 @@ async function processImage(imagePath: string) {
 
 // Run the function with your image path
 await processImage("./images/colours.png");
+process.exit(0);
