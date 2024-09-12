@@ -93,9 +93,12 @@ const processImage = async (imagePath: string) => {
     fs.mkdirSync("./debug");
   }
 
-  const table = [];
+  // Array to hold all promises
+  const percentagePromises = [];
+  const table: { firstPercentage: string; firstColor: string; secondPercentage: string; secondColor: string; }[] = [];
+
   for (let i = 0; i < numRows; i++) {
-    let percentage1 = await extractTextFromImage(
+    const percentage1Promise = extractTextFromImage(
       image,
       0, // source x
       i * rowHeight, // source y (starting point for this row)
@@ -104,7 +107,7 @@ const processImage = async (imagePath: string) => {
       i,
       1,
     );
-    let percentage2 = await extractTextFromImage(
+    const percentage2Promise = extractTextFromImage(
       image,
       115, // source x
       i * rowHeight, // source y (same row)
@@ -114,29 +117,38 @@ const processImage = async (imagePath: string) => {
       2,
     );
 
-    // Clean up the extracted percentages
-    const cleanPercentage = (percentage: string) => {
-      const match = percentage.match(/[+-]?\d+%/);
-      return match ? match[0] : percentage;
-    };
+    percentagePromises.push(
+      Promise.all([percentage1Promise, percentage2Promise]).then(
+        async ([percentage1, percentage2]) => {
+          // Clean up the extracted percentages
+          const cleanPercentage = (percentage: string) => {
+            const match = percentage.match(/[+-]?\d+%/);
+            return match ? match[0] : percentage;
+          };
 
-    percentage1 = cleanPercentage(percentage1);
-    percentage2 = cleanPercentage(percentage2);
+          percentage1 = cleanPercentage(percentage1);
+          percentage2 = cleanPercentage(percentage2);
 
-    const y = 15 + i * rowHeight;
+          const y = 15 + i * rowHeight;
 
-    // Extract the colors
-    const color1 = getAverageColor(image, 240, y, 30, 30, i, 1); // First column color
-    const color2 = getAverageColor(image, 270, y, 30, 30, i, 2); // Second column color
+          // Extract the colors
+          const color1 = getAverageColor(image, 240, y, 30, 30, i, 1); // First column color
+          const color2 = getAverageColor(image, 270, y, 30, 30, i, 2); // Second column color
 
-    // Add the data to the table
-    table.push({
-      firstPercentage: percentage1,
-      firstColor: `rgb(${color1[0]}, ${color1[1]}, ${color1[2]})`,
-      secondPercentage: percentage2,
-      secondColor: `rgb(${color2[0]}, ${color2[1]}, ${color2[2]})`,
-    });
+          // Add the data to the table
+          table.push({
+            firstPercentage: percentage1,
+            firstColor: `rgb(${color1[0]}, ${color1[1]}, ${color1[2]})`,
+            secondPercentage: percentage2,
+            secondColor: `rgb(${color2[0]}, ${color2[1]}, ${color2[2]})`,
+          });
+        },
+      ),
+    );
   }
+
+  // Wait for all Tesseract calls to complete
+  await Promise.all(percentagePromises);
 
   // Convert percentage strings to numbers for sorting
   const percentageToNumber = (percentage: string): number => {
