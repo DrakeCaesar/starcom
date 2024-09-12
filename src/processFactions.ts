@@ -81,42 +81,44 @@ async function handleRow(
     buyProc: string;
   }[],
 ) {
+  const PADDING = 5;
+
   const count1Promise = extractTextFromImage(
     image,
-    422,
-    324 + rowIndex * rowHeight,
-    62,
-    14,
+    422 - PADDING, // x coordinate adjusted
+    324 + rowIndex * rowHeight - PADDING, // y coordinate adjusted
+    62 + 2 * PADDING, // width increased by 2 * PADDING
+    14 + 2 * PADDING, // height increased by 2 * PADDING
     rowIndex,
     0,
   );
 
   const count2Promise = extractTextFromImage(
     image,
-    570,
-    324 + rowIndex * rowHeight,
-    62,
-    14,
+    570 - PADDING, // x coordinate adjusted
+    324 + rowIndex * rowHeight - PADDING, // y coordinate adjusted
+    62 + 2 * PADDING, // width increased by 2 * PADDING
+    14 + 2 * PADDING, // height increased by 2 * PADDING
     rowIndex,
     1,
   );
 
   const pricePromise = extractTextFromImage(
     image,
-    763,
-    325 + rowIndex * rowHeight,
-    110,
-    14,
+    763 - PADDING, // x coordinate adjusted
+    325 + rowIndex * rowHeight - PADDING, // y coordinate adjusted
+    100 + 2 * PADDING, // width increased by 2 * PADDING
+    14 + 2 * PADDING, // height increased by 2 * PADDING
     rowIndex,
     1,
   );
 
   const percPromise = extractTextFromImage(
     image,
-    873,
-    325 + rowIndex * rowHeight,
-    140,
-    14,
+    873 - PADDING, // x coordinate adjusted
+    325 + rowIndex * rowHeight - PADDING, // y coordinate adjusted
+    120 + 2 * PADDING, // width increased by 2 * PADDING
+    14 + 2 * PADDING, // height increased by 2 * PADDING
     rowIndex,
     1,
   );

@@ -9,7 +9,7 @@ let tesseractWorker: any = null;
 export async function initializeTesseractWorker() {
   const worker = await createWorker();
   await worker.setParameters({
-    tessedit_char_whitelist: "0123456789+-% /.",
+    tessedit_char_whitelist: "0123456789+-%/.",
     tessedit_pageseg_mode: Tesseract.PSM.SINGLE_LINE,
   });
   return worker;
@@ -32,7 +32,10 @@ export async function extractTextFromImage(
   const canvas = createCanvas(width, height);
   const ctx = canvas.getContext("2d");
   ctx.drawImage(image, x, y, width, height, 0, 0, width, height);
-  await saveCanvasAsImage(canvas, `row-${rowIndex}-col-${colIndex}-text.png`);
+  await saveCanvasAsImage(
+    canvas,
+    `row-${rowIndex}-col-${colIndex}-${x}-${y}-text.png`,
+  );
 
   const buffer = canvas.toBuffer("image/png");
   const {
