@@ -1,7 +1,7 @@
 import { createCanvas, loadImage } from "canvas";
 import * as fs from "fs";
 import * as path from "path";
-import Tesseract from "tesseract.js";
+import Tesseract, { createWorker } from "tesseract.js";
 
 type RGB = [number, number, number];
 type PercentageColorRow = {
@@ -19,6 +19,20 @@ const saveCanvasAsImage = (canvas: any, filename: string) => {
 };
 
 // Helper function to extract percentage text
+
+// Initialize the Tesseract worker once
+const initializeTesseractWorker = async () => {
+  const worker = await createWorker();
+  await worker.setParameters({
+    tessedit_char_whitelist: "0123456789+-%",
+    tessedit_pageseg_mode: Tesseract.PSM.SINGLE_LINE,
+  });
+  return worker;
+};
+
+// Save this worker to reuse across function calls
+let tesseractWorker: any = null;
+
 const extractTextFromImage = async (
   image: any,
   x: number,
@@ -28,23 +42,30 @@ const extractTextFromImage = async (
   rowIndex: number,
   colIndex: number,
 ): Promise<string> => {
+  // Initialize the Tesseract worker if it hasn't been initialized yet
+  if (!tesseractWorker) {
+    tesseractWorker = await initializeTesseractWorker();
+  }
+
   const canvas = createCanvas(width, height);
   const ctx = canvas.getContext("2d");
 
   // Crop the image properly by specifying the source region
   ctx.drawImage(image, x, y, width, height, 0, 0, width, height);
 
-  // Save the cropped image for debugging
+  // Save the cropped image for debugging (optional)
   saveCanvasAsImage(canvas, `row-${rowIndex}-col-${colIndex}-text.png`);
 
   // Convert the canvas to a Buffer for Tesseract
   const buffer = canvas.toBuffer("image/png");
 
-  const result = await Tesseract.recognize(buffer, "eng");
+  // Use the worker to recognize the text from the image
+  const {
+    data: { text },
+  } = await tesseractWorker.recognize(buffer);
 
-  return result.data.text.trim();
+  return text.trim();
 };
-
 // Helper function to get average color from a section of the image
 const getAverageColor = (
   image: any,
@@ -95,7 +116,12 @@ const processImage = async (imagePath: string) => {
 
   // Array to hold all promises
   const percentagePromises = [];
-  const table: { firstPercentage: string; firstColor: string; secondPercentage: string; secondColor: string; }[] = [];
+  const table: {
+    firstPercentage: string;
+    firstColor: string;
+    secondPercentage: string;
+    secondColor: string;
+  }[] = [];
 
   for (let i = 0; i < numRows; i++) {
     const percentage1Promise = extractTextFromImage(
