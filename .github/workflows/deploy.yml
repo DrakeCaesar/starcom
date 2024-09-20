@@ -36,7 +36,8 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/master'
-
+    permissions:
+      contents: write
     steps:
       - name: Download artifact
         uses: actions/download-artifact@v3
@@ -49,5 +50,3 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./dist
-        permissions:
-          contents: write
