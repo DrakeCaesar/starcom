@@ -3,10 +3,10 @@
         
         <td class="currency" style="background-image: url('./images/commodities/${e.commodity}.png');"></td>
         <td class="empty"></td>
-
+  
         
         <!-- Sell Info Columns -->
-
+  
         <td>${e.bestSellFaction}</td>
         
         <td class="avatar" style="background-image: url('./images/avatars/${e.bestSellFaction}.png');"></td>
@@ -16,14 +16,14 @@
         
         <td class="currency" style="background-image: url('./images/commodities/${e.bestSellCurrency}.png');"></td>
         
-        <td>${e.bestSellPriceOG.toFixed(2)}</td>
+        <td class="left-align-right">${e.bestSellPriceOG.toFixed(2)}</td>
         
-        <td>${e.bestSellPercentage.toFixed(0)}%</td>
+        <td class="left-align-right">${e.bestSellPercentage.toFixed(0)}%</td>
         
         <td class="empty"></td>
         
         
-
+  
         <!-- Buy Info Columns -->
         <td>${e.bestBuyFaction}</td>
         
@@ -31,16 +31,16 @@
         
         <!-- <td>${e.bestBuyCurrency}</td> -->
         
-        <td>${e.bestBuyPriceOG.toFixed(2)}</td>
+        <td class="left-align-right">${e.bestBuyPriceOG.toFixed(2)}</td>
         
         <td class="currency" style="background-image: url('./images/commodities/${e.bestBuyCurrency}.png');"></td>
         
-        <td>${e.bestBuyPercentage.toFixed(0)}%</td>
+        <td class="left-align-right">${e.bestBuyPercentage.toFixed(0)}%</td>
         
         <td class="empty"></td>
         
         
         <!-- Profit Column -->
-        <td>${i}</td>
+        <td class="left-align-right">${i}</td>
      </tr>`;y?.insertAdjacentHTML("beforeend",l)})}
 //# sourceMappingURL=index.js.map
