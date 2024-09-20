@@ -64,28 +64,29 @@ function recommendTradeRoutes() {
 
         if (!buyTradeData || !sellTradeData) continue; // Skip if no trade data for the commodity
 
-        // Convert buy and sell prices to aluminum equivalents
-        const buyInAluminum = buyTradeData.buy * buyCurrencyRate;
-        const sellInAluminum = sellTradeData.sell * sellCurrencyRate;
+        // Correctly use sell price for buying and buy price for selling
+        const buyInAluminum = sellTradeData.buy * sellCurrencyRate;
+        const sellInAluminum = buyTradeData.sell * buyCurrencyRate;
 
         // Calculate profit percentage
-        const profitPercentage = (sellInAluminum / buyInAluminum - 1) * 100;
+        const profitPercentage =
+          ((sellInAluminum - buyInAluminum) / buyInAluminum) * 100;
 
         // Store the trade combination with calculated profit
         allTradeRoutes.push({
           commodity,
           bestBuyFaction: buyFactionName,
-          bestBuyPrice: buyInAluminum,
-          bestBuyPriceOG: buyTradeData.buy,
+          bestBuyPrice: sellInAluminum,
+          bestBuyPriceOG: buyTradeData.sell, // Update to reflect the correct original price
           bestBuyCurrency: buyFactionData.currency,
           bestBuyPercentage:
-            (buyInAluminum / commodityRates[commodity] - 1) * 100,
+            (sellInAluminum / commodityRates[commodity] - 1) * 100,
           bestSellFaction: sellFactionName,
-          bestSellPrice: sellInAluminum,
-          bestSellPriceOG: sellTradeData.sell,
+          bestSellPrice: buyInAluminum,
+          bestSellPriceOG: sellTradeData.buy, // Update to reflect the correct original price
           bestSellCurrency: sellFactionData.currency,
           bestSellPercentage:
-            (sellInAluminum / commodityRates[commodity] - 1) * 100,
+            (buyInAluminum / commodityRates[commodity] - 1) * 100,
           profitPercentage,
         });
       }
@@ -119,14 +120,14 @@ function recommendTradeRoutes() {
           tradeInfo.bestSellFaction
         }.png');"></td>
         
-        <td>${tradeInfo.bestSellPriceOG.toFixed(2)}</td>
-        
         <!-- <td>${tradeInfo.bestSellCurrency}</td> -->
          
         
         <td class="currency" style="background-image: url('./images/commodities/${
           tradeInfo.bestSellCurrency
         }.png');"></td>
+        
+        <td>${tradeInfo.bestSellPriceOG.toFixed(2)}</td>
         
         <td>${tradeInfo.bestSellPercentage.toFixed(0)}%</td>
         
@@ -141,9 +142,9 @@ function recommendTradeRoutes() {
           tradeInfo.bestBuyFaction
         }.png');"></td>
         
-        <td>${tradeInfo.bestBuyPriceOG.toFixed(2)}</td>
-        
         <!-- <td>${tradeInfo.bestBuyCurrency}</td> -->
+        
+        <td>${tradeInfo.bestBuyPriceOG.toFixed(2)}</td>
         
         <td class="currency" style="background-image: url('./images/commodities/${
           tradeInfo.bestBuyCurrency
