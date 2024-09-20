@@ -127,9 +127,13 @@ function recommendTradeRoutes() {
           tradeInfo.bestSellCurrency
         }.png');"></td>
         
-        <td class="left-align-right">${tradeInfo.bestSellPriceOG.toFixed(2)}</td>
+        <td class="left-align-right">${tradeInfo.bestSellPriceOG.toFixed(
+          2,
+        )}</td>
         
-        <td class="left-align-right">${tradeInfo.bestSellPercentage.toFixed(0)}%</td>
+        <td class="left-align-right">${tradeInfo.bestSellPercentage.toFixed(
+          0,
+        )}%</td>
         
         <td class="empty"></td>
         
@@ -150,7 +154,9 @@ function recommendTradeRoutes() {
           tradeInfo.bestBuyCurrency
         }.png');"></td>
         
-        <td class="left-align-right">${tradeInfo.bestBuyPercentage.toFixed(0)}%</td>
+        <td class="left-align-right">${tradeInfo.bestBuyPercentage.toFixed(
+          0,
+        )}%</td>
         
         <td class="empty"></td>
         
