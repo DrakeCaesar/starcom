@@ -1,6 +1,7 @@
 import { defineConfig } from "vite";
 
 export default defineConfig({
+  base: "/starcom/",
   build: {
     outDir: "dist",
     sourcemap: true,
