@@ -63,17 +63,17 @@ function recommendTradeRoutes() {
         // Store the trade combination with calculated profit
         allTradeRoutes.push({
           commodity,
-          bestBuyFaction: buyFactionName,
-          bestBuyPrice: sellInAluminum,
-          bestBuyPriceOG: buyTradeData.sell,
-          bestBuyCurrency: buyFactionData.currency,
-          bestBuyPercentage:
-            (sellInAluminum / commodityRates[commodity] - 1) * 100,
-          bestSellFaction: sellFactionName,
-          bestSellPrice: buyInAluminum,
-          bestSellPriceOG: sellTradeData.buy,
-          bestSellCurrency: sellFactionData.currency,
+          bestSellFaction: buyFactionName,
+          bestSellPrice: sellInAluminum,
+          bestSellPriceOG: buyTradeData.sell,
+          bestSellCurrency: buyFactionData.currency,
           bestSellPercentage:
+            (sellInAluminum / commodityRates[commodity] - 1) * 100,
+          bestBuyFaction: sellFactionName,
+          bestBuyPrice: buyInAluminum,
+          bestBuyPriceOG: sellTradeData.buy,
+          bestBuyCurrency: sellFactionData.currency,
+          bestBuyPercentage:
             (buyInAluminum / commodityRates[commodity] - 1) * 100,
           profitPercentage,
         });
@@ -95,12 +95,12 @@ function recommendTradeRoutes() {
 
     // Measure time for getColor calls
     let startTime = Date.now();
-    const sellPercentageColor = getColor(tradeInfo.bestSellPercentage, false);
+    const buyPercentageColor = getColor(tradeInfo.bestBuyPercentage, false);
     let endTime = Date.now();
     totalTime += endTime - startTime;
 
     startTime = Date.now();
-    const buyPercentageColor = getColor(tradeInfo.bestBuyPercentage, true);
+    const sellPercentageColor = getColor(tradeInfo.bestSellPercentage, true);
     endTime = Date.now();
     totalTime += endTime - startTime;
 
@@ -121,6 +121,20 @@ function recommendTradeRoutes() {
         }.png');"></td>
         <td class="empty"></td>
   
+        <!-- Buy Info Columns -->
+        <td>${tradeInfo.bestBuyFaction}</td>
+        <td class="avatar" style="background-image: url('./images/avatars/${
+          tradeInfo.bestBuyFaction
+        }.png');"></td>
+        <td class="currency" style="background-image: url('./images/commodities/${
+          tradeInfo.bestBuyCurrency
+        }.png');"></td>
+        <td class="left-align-right">${tradeInfo.bestBuyPriceOG.toFixed(2)}</td>
+        <td class="left-align-right" style="color: ${buyPercentageColor};">
+          ${tradeInfo.bestBuyPercentage.toFixed(0)}%
+        </td>
+        <td class="empty"></td>
+  
         <!-- Sell Info Columns -->
         <td>${tradeInfo.bestSellFaction}</td>
         <td class="avatar" style="background-image: url('./images/avatars/${
@@ -134,20 +148,6 @@ function recommendTradeRoutes() {
         )}</td>
         <td class="left-align-right" style="color: ${sellPercentageColor};">
           ${tradeInfo.bestSellPercentage.toFixed(0)}%
-        </td>
-        <td class="empty"></td>
-  
-        <!-- Buy Info Columns -->
-        <td>${tradeInfo.bestBuyFaction}</td>
-        <td class="avatar" style="background-image: url('./images/avatars/${
-          tradeInfo.bestBuyFaction
-        }.png');"></td>
-        <td class="left-align-right">${tradeInfo.bestBuyPriceOG.toFixed(2)}</td>
-        <td class="currency" style="background-image: url('./images/commodities/${
-          tradeInfo.bestBuyCurrency
-        }.png');"></td>
-        <td class="left-align-right" style="color: ${buyPercentageColor};">
-          ${tradeInfo.bestBuyPercentage.toFixed(0)}%
         </td>
         <td class="empty"></td>
   

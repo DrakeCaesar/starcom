@@ -118,16 +118,18 @@ table {
   margin: auto;
   padding: 50px;
 }
+
 .currency,
 .avatar {
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
-  min-width: 5vh;
+  min-width: 3vh;
 }
 
-.currency {
+td.currency {
   background-color: $highlight-color;
+  background-size: cover;
 }
 
 .empty {
