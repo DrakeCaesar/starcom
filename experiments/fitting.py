@@ -50,19 +50,22 @@ hsl_values_2_shifted[:, 0] = (hsl_values_2_shifted[:, 0] + 180) % 360
 # Define how far to extend (number of extra points at each end)
 num_extra_points = 5
 
-# Function to linearly extend a dataset
+# Function to linearly extend a dataset with controlled step size
 def linear_extension(x_values, y_values, num_points, extend_forward=True):
+    # Calculate the step size using the left-side segment size
+    step_size = x_values[1] - x_values[0]  # Consistent step size
+
     if extend_forward:
-        # Calculate slope from last two points
+        # Extend forward using consistent step size
+        x_extension = np.linspace(x_values[-1] + step_size, x_values[-1] + step_size * num_points, num_points)
+        # Use the slope from the last two points
         slope = (y_values[-1] - y_values[-2]) / (x_values[-1] - x_values[-2])
-        # Extend forward
-        x_extension = np.linspace(x_values[-1], x_values[-1] + (x_values[-1] - x_values[-2]) * num_points, num_points + 1)[1:]
         y_extension = y_values[-1] + slope * (x_extension - x_values[-1])
     else:
-        # Calculate slope from first two points
-        slope = (y_values[1] - y_values[0]) / (x_values[1] - x_values[0])
         # Extend backward
-        x_extension = np.linspace(x_values[0] - (x_values[1] - x_values[0]) * num_points, x_values[0], num_points + 1)[:-1]
+        x_extension = np.linspace(x_values[0] - step_size * num_points, x_values[0] - step_size, num_points)
+        # Use the slope from the first two points
+        slope = (y_values[1] - y_values[0]) / (x_values[1] - x_values[0])
         y_extension = y_values[0] + slope * (x_extension - x_values[0])
     return x_extension, y_extension
 
@@ -122,7 +125,7 @@ def format_polynomial(coeffs):
 # Initialize list to store coefficients
 coefficients_list = []
 
-# Loop over fit orders from 1 to 31
+# Loop over fit orders from 1 to 19
 for fit_order in range(1, 20):
     # Perform polynomial fitting for both extended datasets (Gradient 1 and Gradient 2)
     

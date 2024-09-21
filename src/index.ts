@@ -1,4 +1,5 @@
 import { factions } from "./factions";
+import { getColor } from "./getColor";
 import "./styles.scss";
 
 // Commodities and conversion rates (Aluminum = 1.0)
@@ -126,18 +127,9 @@ function recommendTradeRoutes() {
         : `${tradeInfo.profitPercentage.toFixed(2)}%`;
 
     // Get colors for percentages
-    const sellPercentageColor = getColorForPercentage(
-      tradeInfo.bestSellPercentage,
-      false,
-    );
-    const buyPercentageColor = getColorForPercentage(
-      tradeInfo.bestBuyPercentage,
-      true,
-    );
-    const profitPercentageColor = getColorForPercentage(
-      tradeInfo.profitPercentage,
-      false,
-    );
+    const sellPercentageColor = getColor(tradeInfo.bestSellPercentage, false);
+    const buyPercentageColor = getColor(tradeInfo.bestBuyPercentage, true);
+    const profitPercentageColor = getColor(tradeInfo.profitPercentage, false);
 
     const row = `<tr>
         <td>${tradeInfo.commodity}</td>
