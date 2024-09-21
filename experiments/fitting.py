@@ -242,3 +242,66 @@ for order in range(1, 20):
     print(f"\nFitting Functions for Polynomial Order {order}:\n")
     df_order = coefficients_df[coefficients_df['Fit Order'] == order]
     print(df_order[['Dataset', 'Channel', 'Equation']].to_string(index=False))
+
+# After the plotting code and creation of coefficients_df
+
+# Define the order for which you want to extract coefficients
+order = 13
+
+# Filter the DataFrame for the specified order
+coeffs_order = coefficients_df[coefficients_df['Fit Order'] == order]
+
+# Define the data intervals for both gradients
+gradient1Range = {'min': min(data_1['numbers']), 'max': max(data_1['numbers'])}
+gradient2Range = {'min': min(data_2['numbers']), 'max': max(data_2['numbers'])}
+
+# Open a TypeScript file to write the coefficients
+with open('src/colorConstants.ts', 'w') as f:
+    # Write the gradient ranges
+    f.write('// Define the data intervals for both gradients\n')
+    f.write(f'export const gradient1Range = {{ min: {gradient1Range["min"]}, max: {gradient1Range["max"]} }};\n')
+    f.write(f'export const gradient2Range = {{ min: {gradient2Range["min"]}, max: {gradient2Range["max"]} }};\n\n')
+
+    # Write the coefficients for Gradient 1
+    f.write(f'// Polynomial coefficients for Gradient 1 (Order {order})\n')
+
+    # For each channel in Gradient 1
+    for channel in ['Hue', 'Saturation', 'Lightness']:
+        # Get the coefficients
+        coeffs = coeffs_order[(coeffs_order['Dataset'] == 'Gradient 1') & (coeffs_order['Channel'] == channel)]['Coefficients'].values[0]
+        # Coefficient array name, e.g., hueCoeffs1
+        coeff_array_name = ''
+        if channel == 'Hue':
+            coeff_array_name = 'hueCoeffs1'
+        elif channel == 'Saturation':
+            coeff_array_name = 'saturationCoeffs1'
+        elif channel == 'Lightness':
+            coeff_array_name = 'lightnessCoeffs1'
+        # Write the coefficients
+        f.write(f'export const {coeff_array_name} = [\n')
+        # Format the coefficients
+        coeffs_formatted = ', '.join(f'{coeff:.4e}' for coeff in coeffs)
+        f.write(f'  {coeffs_formatted}\n')
+        f.write('];\n\n')
+
+    # Write the coefficients for Gradient 2
+    f.write(f'// Polynomial coefficients for Gradient 2 (Order {order})\n')
+
+    # For each channel in Gradient 2
+    for channel in ['Hue (Shifted)', 'Saturation', 'Lightness']:
+        # Get the coefficients
+        coeffs = coeffs_order[(coeffs_order['Dataset'] == 'Gradient 2') & (coeffs_order['Channel'] == channel)]['Coefficients'].values[0]
+        # Coefficient array name, e.g., hueCoeffs2
+        coeff_array_name = ''
+        if channel == 'Hue (Shifted)':
+            coeff_array_name = 'hueCoeffs2'
+        elif channel == 'Saturation':
+            coeff_array_name = 'saturationCoeffs2'
+        elif channel == 'Lightness':
+            coeff_array_name = 'lightnessCoeffs2'
+        # Write the coefficients
+        f.write(f'export const {coeff_array_name} = [\n')
+        # Format the coefficients
+        coeffs_formatted = ', '.join(f'{coeff:.4e}' for coeff in coeffs)
+        f.write(f'  {coeffs_formatted}\n')
+        f.write('];\n\n')

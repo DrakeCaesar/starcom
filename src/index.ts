@@ -105,7 +105,7 @@ function recommendTradeRoutes() {
     totalTime += endTime - startTime;
 
     startTime = Date.now();
-    const profitPercentageColor = getColor(tradeInfo.profitPercentage, false);
+    const profitPercentageColor = getColor(tradeInfo.profitPercentage, true);
     endTime = Date.now();
     totalTime += endTime - startTime;
 
