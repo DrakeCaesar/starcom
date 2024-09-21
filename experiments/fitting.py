@@ -64,7 +64,6 @@ def linear_extension(x_values, y_values, num_points, extend_forward=True):
         # Extend backward
         x_extension = np.linspace(x_values[0] - (x_values[1] - x_values[0]) * num_points, x_values[0], num_points + 1)[:-1]
         y_extension = y_values[0] + slope * (x_extension - x_values[0])
-    
     return x_extension, y_extension
 
 # Extend both the start and end of each set
@@ -123,7 +122,7 @@ def format_polynomial(coeffs):
 # Initialize list to store coefficients
 coefficients_list = []
 
-# Loop over fit orders from 1 to 16
+# Loop over fit orders from 1 to 31
 for fit_order in range(1, 32):
     # Perform polynomial fitting for both extended datasets (Gradient 1 and Gradient 2)
     
@@ -137,9 +136,9 @@ for fit_order in range(1, 32):
     popt_s_2, _ = curve_fit(polynomial_fit(fit_order), numbers_2_extended, hsl_values_2_extended[:, 2], p0=[1] * (fit_order + 1))
     popt_l_2, _ = curve_fit(polynomial_fit(fit_order), numbers_2_extended, hsl_values_2_extended[:, 1], p0=[1] * (fit_order + 1))
     
-    # Generate smooth range for plotting the fit
-    x_smooth_1 = np.linspace(min(numbers_1_extended), max(numbers_1_extended), 500)
-    x_smooth_2 = np.linspace(min(numbers_2_extended), max(numbers_2_extended), 500)
+    # Generate smooth range for plotting the fit (within original data range)
+    x_smooth_1 = np.linspace(min(data_1['numbers']), max(data_1['numbers']), 500)
+    x_smooth_2 = np.linspace(min(data_2['numbers']), max(data_2['numbers']), 500)
     
     # Apply the fitted polynomial to the smooth x-range
     fitted_h_1 = polynomial_fit(fit_order)(x_smooth_1, *popt_h_1)
@@ -201,9 +200,9 @@ for fit_order in range(1, 32):
     
     # Plot for Gradient 1
     plt.subplot(2, 1, 1)
-    plt.plot(numbers_1_extended, hsl_values_1_extended[:, 0], 'ro', label="Extended Hue")
-    plt.plot(numbers_1_extended, hsl_values_1_extended[:, 2], 'go', label="Extended Saturation")
-    plt.plot(numbers_1_extended, hsl_values_1_extended[:, 1], 'bo', label="Extended Lightness")
+    plt.plot(data_1['numbers'], hsl_values_1[:, 0], 'ro', label="Hue")
+    plt.plot(data_1['numbers'], hsl_values_1[:, 2], 'go', label="Saturation")
+    plt.plot(data_1['numbers'], hsl_values_1[:, 1], 'bo', label="Lightness")
     plt.plot(x_smooth_1, fitted_h_1, 'r-', label=f"Fitted Hue (Order {fit_order})")
     plt.plot(x_smooth_1, fitted_s_1, 'g-', label=f"Fitted Saturation (Order {fit_order})")
     plt.plot(x_smooth_1, fitted_l_1, 'b-', label=f"Fitted Lightness (Order {fit_order})")
@@ -212,12 +211,12 @@ for fit_order in range(1, 32):
     plt.legend()
     plt.title(f"Gradient 1: {fit_order}th-Order Polynomial Fitting of HSL Channels")
     plt.grid(True)
-
+    
     # Plot for Gradient 2
     plt.subplot(2, 1, 2)
-    plt.plot(numbers_2_extended, hsl_values_2_extended[:, 0], 'ro', label="Extended Shifted Hue")
-    plt.plot(numbers_2_extended, hsl_values_2_extended[:, 2], 'go', label="Extended Saturation")
-    plt.plot(numbers_2_extended, hsl_values_2_extended[:, 1], 'bo', label="Extended Lightness")
+    plt.plot(data_2['numbers'], hsl_values_2_shifted[:, 0], 'ro', label="Shifted Hue")
+    plt.plot(data_2['numbers'], hsl_values_2[:, 2], 'go', label="Saturation")
+    plt.plot(data_2['numbers'], hsl_values_2[:, 1], 'bo', label="Lightness")
     plt.plot(x_smooth_2, fitted_h_2, 'r-', label=f"Fitted Shifted Hue (Order {fit_order})")
     plt.plot(x_smooth_2, fitted_s_2, 'g-', label=f"Fitted Saturation (Order {fit_order})")
     plt.plot(x_smooth_2, fitted_l_2, 'b-', label=f"Fitted Lightness (Order {fit_order})")
@@ -226,16 +225,17 @@ for fit_order in range(1, 32):
     plt.legend()
     plt.title(f"Gradient 2: {fit_order}th-Order Polynomial Fitting of Shifted HSL Channels")
     plt.grid(True)
-
+    
     plt.tight_layout()
     # Save the figures to files instead of showing them
     plt.savefig(f"images/plots/polynomial_fit_order_{fit_order}.png")
+    plt.close()  # Close the figure to free memory
 
 # Create a DataFrame from the coefficients list
 coefficients_df = pd.DataFrame(coefficients_list)
 
 # Print the fitting functions as a table for each order
-for order in range(1, 17):
+for order in range(1, 29):
     print(f"\nFitting Functions for Polynomial Order {order}:\n")
     df_order = coefficients_df[coefficients_df['Fit Order'] == order]
     print(df_order[['Dataset', 'Channel', 'Equation']].to_string(index=False))
