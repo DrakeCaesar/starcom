@@ -124,7 +124,7 @@ def format_polynomial(coeffs):
 coefficients_list = []
 
 # Loop over fit orders from 1 to 16
-for fit_order in range(1, 17):
+for fit_order in range(1, 32):
     # Perform polynomial fitting for both extended datasets (Gradient 1 and Gradient 2)
     
     # Gradient 1
@@ -212,7 +212,7 @@ for fit_order in range(1, 17):
     plt.legend()
     plt.title(f"Gradient 1: {fit_order}th-Order Polynomial Fitting of HSL Channels")
     plt.grid(True)
-    
+
     # Plot for Gradient 2
     plt.subplot(2, 1, 2)
     plt.plot(numbers_2_extended, hsl_values_2_extended[:, 0], 'ro', label="Extended Shifted Hue")
@@ -226,11 +226,10 @@ for fit_order in range(1, 17):
     plt.legend()
     plt.title(f"Gradient 2: {fit_order}th-Order Polynomial Fitting of Shifted HSL Channels")
     plt.grid(True)
-    
+
     plt.tight_layout()
-    plt.show()
-    # Uncomment the following line if you want to save the figures instead of showing them
-    # plt.savefig(f"polynomial_fit_order_{fit_order}.png")
+    # Save the figures to files instead of showing them
+    plt.savefig(f"images/plots/polynomial_fit_order_{fit_order}.png")
 
 # Create a DataFrame from the coefficients list
 coefficients_df = pd.DataFrame(coefficients_list)
