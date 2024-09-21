@@ -40,7 +40,7 @@ table {
     th {
       text-align: left;
       padding: 10px;
-      color: lighten($text-color, 10%);
+      color: adjust-color($text-color, $lightness: 10%);
       font-weight: bold;
     }
   }
@@ -48,11 +48,11 @@ table {
   tbody {
     tr {
       &:nth-child(even) {
-        background-color: darken($highlight-color, 5%);
+        background-color: adjust-color($highlight-color, $lightness: -5%);
       }
 
       &:hover {
-        background-color: lighten($highlight-color, 5%);
+        background-color: adjust-color($highlight-color, $lightness: 5%);
       }
 
       th,
