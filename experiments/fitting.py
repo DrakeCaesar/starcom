@@ -123,7 +123,7 @@ def format_polynomial(coeffs):
 coefficients_list = []
 
 # Loop over fit orders from 1 to 31
-for fit_order in range(1, 32):
+for fit_order in range(1, 20):
     # Perform polynomial fitting for both extended datasets (Gradient 1 and Gradient 2)
     
     # Gradient 1
@@ -235,7 +235,7 @@ for fit_order in range(1, 32):
 coefficients_df = pd.DataFrame(coefficients_list)
 
 # Print the fitting functions as a table for each order
-for order in range(1, 29):
+for order in range(1, 20):
     print(f"\nFitting Functions for Polynomial Order {order}:\n")
     df_order = coefficients_df[coefficients_df['Fit Order'] == order]
     print(df_order[['Dataset', 'Channel', 'Equation']].to_string(index=False))
