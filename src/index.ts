@@ -113,49 +113,68 @@ function recommendTradeRoutes() {
     if (index === allTradeRoutes.length - 1) {
       console.log(`Total time taken for getColor calls: ${totalTime} ms`);
     }
+
+    // Add table headers
+    const tableHeaders = `
+  <thead>
+    <tr>
+      <th colspan="2">Commodity</th>
+      <th class="empty"></th>
+      <th colspan="5">Buy From</th>
+      <th class="empty"></th>
+      <th colspan="5">Sell To</th>
+      <th class="empty"></th>
+      <th>Profit</th>
+    </tr>
+  </thead>
+`;
+
     const row = `<tr>
-        <td>${tradeInfo.commodity}</td>
-        
-        <td class="currency" style="background-image: url('./images/commodities/${
-          tradeInfo.commodity
-        }.png');"></td>
-        <td class="empty"></td>
-  
-        <!-- Buy Info Columns -->
-        <td>${tradeInfo.bestBuyFaction}</td>
-        <td class="avatar" style="background-image: url('./images/avatars/${
-          tradeInfo.bestBuyFaction
-        }.png');"></td>
-        <td class="currency" style="background-image: url('./images/commodities/${
-          tradeInfo.bestBuyCurrency
-        }.png');"></td>
-        <td class="left-align-right">${tradeInfo.bestBuyPriceOG.toFixed(2)}</td>
-        <td class="left-align-right" style="color: ${buyPercentageColor};">
-          ${tradeInfo.bestBuyPercentage.toFixed(0)}%
-        </td>
-        <td class="empty"></td>
-  
-        <!-- Sell Info Columns -->
-        <td>${tradeInfo.bestSellFaction}</td>
-        <td class="avatar" style="background-image: url('./images/avatars/${
-          tradeInfo.bestSellFaction
-        }.png');"></td>
-        <td class="currency" style="background-image: url('./images/commodities/${
-          tradeInfo.bestSellCurrency
-        }.png');"></td>
-        <td class="left-align-right">${tradeInfo.bestSellPriceOG.toFixed(
-          2,
-        )}</td>
-        <td class="left-align-right" style="color: ${sellPercentageColor};">
-          ${tradeInfo.bestSellPercentage.toFixed(0)}%
-        </td>
-        <td class="empty"></td>
-  
-        <!-- Profit Column -->
-        <td class="left-align-right" style="color: ${profitPercentageColor};">
-          ${profit}
-        </td>
-     </tr>`;
+    <td>${tradeInfo.commodity}</td>
+    <td class="currency" style="background-image: url('./images/commodities/${
+      tradeInfo.commodity
+    }.png');"></td>
+    <td class="empty"></td>
+
+    <!-- Buy Info Columns -->
+    <td>${tradeInfo.bestBuyFaction}</td>
+    <td class="avatar" style="background-image: url('./images/avatars/${
+      tradeInfo.bestBuyFaction
+    }.png');"></td>
+    <td class="currency" style="background-image: url('./images/commodities/${
+      tradeInfo.bestBuyCurrency
+    }.png');"></td>
+    <td class="left-align-right">${tradeInfo.bestBuyPriceOG.toFixed(2)}</td>
+    <td class="left-align-right" style="color: ${buyPercentageColor};">
+      ${tradeInfo.bestBuyPercentage.toFixed(0)}%
+    </td>
+    <td class="empty"></td>
+
+    <!-- Sell Info Columns -->
+    <td>${tradeInfo.bestSellFaction}</td>
+    <td class="avatar" style="background-image: url('./images/avatars/${
+      tradeInfo.bestSellFaction
+    }.png');"></td>
+    <td class="currency" style="background-image: url('./images/commodities/${
+      tradeInfo.bestSellCurrency
+    }.png');"></td>
+    <td class="left-align-right">${tradeInfo.bestSellPriceOG.toFixed(2)}</td>
+    <td class="left-align-right" style="color: ${sellPercentageColor};">
+      ${tradeInfo.bestSellPercentage.toFixed(0)}%
+    </td>
+    <td class="empty"></td>
+
+    <!-- Profit Column -->
+    <td class="left-align-right" style="color: ${profitPercentageColor};">
+      ${profit}
+    </td>
+</tr>`;
+
+    // Insert headers before the first row
+    if (index === 0) {
+      tableBody?.insertAdjacentHTML("beforeend", tableHeaders);
+    }
+
     tableBody?.insertAdjacentHTML("beforeend", row);
   });
 }

@@ -3,6 +3,7 @@ $text-color: #e0e0e0;
 $highlight-color: hsl(189, 77%, 10%);
 $border-color: #8a8a8a;
 $font-family: "Roboto", sans-serif;
+
 body {
   margin: 0;
   padding: 0;
@@ -54,6 +55,7 @@ table {
         background-color: lighten($highlight-color, 5%);
       }
 
+      th,
       td {
         border: 1px solid $border-color;
         font-size: 24px;
