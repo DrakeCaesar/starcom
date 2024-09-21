@@ -26,41 +26,6 @@ console.clear();
 
 recommendTradeRoutes();
 
-function getColorForPercentage(percentage: number, isBuyPercentage: boolean) {
-  // Clamp percentage to -200% to +200%
-  percentage = Math.max(-200, Math.min(200, percentage));
-
-  // Invert the mapping for buy percentages
-  if (isBuyPercentage) {
-    percentage = -percentage;
-  }
-
-  // Define color ranges and corresponding single colors (no interpolation)
-  const ranges = [
-    { color: "#F00", range: [-50, -40] },
-    { color: "#F30", range: [-40, -30] },
-    { color: "#F60", range: [-30, -20] },
-    { color: "#F90", range: [-20, -10] },
-    { color: "#FC0", range: [-10, 0] },
-    { color: "#FF0", range: [0, 10] },
-    { color: "#CF0", range: [10, 20] },
-    { color: "#9F0", range: [20, 30] },
-    { color: "#6F0", range: [30, 40] },
-    { color: "#3F0", range: [40, 50] },
-  ];
-
-  // Find the correct range for the percentage
-  for (const range of ranges) {
-    const [min, max] = range.range;
-    if (percentage >= min && percentage <= max) {
-      return range.color;
-    }
-  }
-
-  // Fallback color if something goes wrong
-  return "rgb(255, 255, 255)"; // White
-}
-
 function recommendTradeRoutes() {
   const tableBody = document.querySelector("#tradeRoutes tbody");
   if (tableBody) {
@@ -119,18 +84,35 @@ function recommendTradeRoutes() {
   // Sort all trade routes by profit percentage in descending order
   allTradeRoutes.sort((a, b) => b.profitPercentage - a.profitPercentage);
 
+  let totalTime = 0;
+
   // Now display the sorted trade routes
-  allTradeRoutes.forEach((tradeInfo) => {
+  allTradeRoutes.forEach((tradeInfo, index) => {
     const profit =
       tradeInfo.profitPercentage > 0
         ? `+${tradeInfo.profitPercentage.toFixed(2)}%`
         : `${tradeInfo.profitPercentage.toFixed(2)}%`;
 
-    // Get colors for percentages
+    // Measure time for getColor calls
+    let startTime = Date.now();
     const sellPercentageColor = getColor(tradeInfo.bestSellPercentage, false);
-    const buyPercentageColor = getColor(tradeInfo.bestBuyPercentage, true);
-    const profitPercentageColor = getColor(tradeInfo.profitPercentage, false);
+    let endTime = Date.now();
+    totalTime += endTime - startTime;
 
+    startTime = Date.now();
+    const buyPercentageColor = getColor(tradeInfo.bestBuyPercentage, true);
+    endTime = Date.now();
+    totalTime += endTime - startTime;
+
+    startTime = Date.now();
+    const profitPercentageColor = getColor(tradeInfo.profitPercentage, false);
+    endTime = Date.now();
+    totalTime += endTime - startTime;
+
+    // If it's the last iteration, print the total time
+    if (index === allTradeRoutes.length - 1) {
+      console.log(`Total time taken for getColor calls: ${totalTime} ms`);
+    }
     const row = `<tr>
         <td>${tradeInfo.commodity}</td>
         
