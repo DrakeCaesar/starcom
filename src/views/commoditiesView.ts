@@ -51,7 +51,7 @@ export function populateCommodityTable(commodityRates: CommodityRate) {
     valueCell.classList.add("numeric");
     row.appendChild(valueCell);
 
-    // Add click event to show sellers for this commodity
+    // Add click event to show sellers and buyers for this commodity
     row.addEventListener("click", () => {
       // Highlight the selected row
       commodityTable
@@ -61,6 +61,9 @@ export function populateCommodityTable(commodityRates: CommodityRate) {
 
       // Show sellers for this commodity
       showSellersForCommodity(commodity, commodityRates);
+
+      // Show buyers for this commodity
+      showBuyersForCommodity(commodity, commodityRates);
     });
 
     commodityTable.appendChild(row);
@@ -72,6 +75,7 @@ export function populateCommodityTable(commodityRates: CommodityRate) {
     if (firstRow) {
       firstRow.classList.add("selected");
       showSellersForCommodity(commodities[0], commodityRates);
+      showBuyersForCommodity(commodities[0], commodityRates);
     }
   }
 }
@@ -90,7 +94,7 @@ export function showSellersForCommodity(
 
   // Get all factions and their prices for this commodity
   const factionsWithPrices = Object.keys(factions)
-    .filter((faction) => factions[faction].commodities[commodity])
+    .filter((faction) => factions[faction].commodities[commodity]?.buy)
     .map((faction) => ({
       name: faction,
       data: factions[faction],
@@ -129,17 +133,17 @@ export function showSellersForCommodity(
     // Buy price
     const priceCell = document.createElement("td");
     priceCell.classList.add("numeric");
-    
+
     // Display aluminum-equivalent price instead of raw price
     priceCell.textContent = factionData.priceInAluminum.toFixed(2);
-    
+
     // Add currency indicator - small Aluminum icon/text
-    const currencyIndicator = document.createElement('span');
+    const currencyIndicator = document.createElement("span");
     currencyIndicator.textContent = " Al";
     currencyIndicator.style.fontSize = "0.8em";
     currencyIndicator.style.opacity = "0.7";
     priceCell.appendChild(currencyIndicator);
-    
+
     row.appendChild(priceCell);
 
     // Percentage difference
@@ -150,5 +154,82 @@ export function showSellersForCommodity(
     row.appendChild(diffCell);
 
     sellersTable.appendChild(row);
+  });
+}
+
+// Show buyers for a specific commodity (sell prices)
+export function showBuyersForCommodity(
+  commodity: string,
+  commodityRates: CommodityRate
+) {
+  const buyersTable = document
+    .getElementById("buyersTable")
+    ?.querySelector("tbody");
+  if (!buyersTable) return;
+
+  buyersTable.innerHTML = "";
+
+  // Get all factions and their prices for this commodity
+  const factionsWithPrices = Object.keys(factions)
+    .filter((faction) => factions[faction].commodities[commodity]?.sell)
+    .map((faction) => ({
+      name: faction,
+      data: factions[faction],
+      priceInAluminum:
+        factions[faction].commodities[commodity].sell *
+        commodityRates[factions[faction].currency],
+      percentDiff:
+        ((factions[faction].commodities[commodity].sell *
+          commodityRates[factions[faction].currency]) /
+          commodityRates[commodity] -
+          1) *
+        100,
+    }))
+    .sort((a, b) => b.priceInAluminum - a.priceInAluminum); // Sort highest price first for sell prices
+
+  // Create rows for each faction
+  factionsWithPrices.forEach((factionData) => {
+    const row = document.createElement("tr");
+
+    // Faction name and avatar
+    const nameCell = document.createElement("td");
+    nameCell.textContent = factionData.name;
+    row.appendChild(nameCell);
+
+    const avatarCell = document.createElement("td");
+    avatarCell.classList.add("avatar");
+    avatarCell.style.backgroundImage = `url('./images/avatars/${factionData.name}.png')`;
+    row.appendChild(avatarCell);
+
+    // Currency
+    const currencyCell = document.createElement("td");
+    currencyCell.classList.add("currency");
+    currencyCell.style.backgroundImage = `url('./images/commodities/${factionData.data.currency}.png')`;
+    row.appendChild(currencyCell);
+
+    // Sell price
+    const priceCell = document.createElement("td");
+    priceCell.classList.add("numeric");
+
+    // Display aluminum-equivalent price instead of raw price
+    priceCell.textContent = factionData.priceInAluminum.toFixed(2);
+
+    // Add currency indicator - small Aluminum icon/text
+    const currencyIndicator = document.createElement("span");
+    currencyIndicator.textContent = " Al";
+    currencyIndicator.style.fontSize = "0.8em";
+    currencyIndicator.style.opacity = "0.7";
+    priceCell.appendChild(currencyIndicator);
+
+    row.appendChild(priceCell);
+
+    // Percentage difference
+    const diffCell = document.createElement("td");
+    diffCell.classList.add("numeric");
+    diffCell.textContent = factionData.percentDiff.toFixed(2) + "%";
+    diffCell.style.color = getColor(factionData.percentDiff, true); // Use true for sell prices
+    row.appendChild(diffCell);
+
+    buyersTable.appendChild(row);
   });
 }

@@ -227,7 +227,7 @@ td.currency {
         right: 5px;
         top: 5px;
       }
-      
+
       &.faction-header {
         &.sort-asc:after {
           content: "▲";
@@ -243,10 +243,10 @@ td.currency {
           top: 5px;
         }
       }
-      
+
       &.active-faction-sort {
         background-color: rgba(44, 139, 160, 0.1);
-        
+
         &:after {
           content: "↔";
           position: absolute;
@@ -256,10 +256,10 @@ td.currency {
           opacity: 0.6;
         }
       }
-      
+
       &.active-trader-sort {
         background-color: rgba(44, 139, 160, 0.1);
-        
+
         &:after {
           content: "↕";
           position: absolute;
@@ -269,28 +269,28 @@ td.currency {
           opacity: 0.6;
         }
       }
-      
+
       .reset-sort {
         opacity: 0.5;
-        
+
         &:hover {
           opacity: 1;
           color: #fff;
         }
       }
     }
-    
+
     &.clickable-trader {
       cursor: pointer;
       position: relative;
-      
+
       &:hover {
         background-color: adjust-color($highlight-color, $lightness: 5%);
       }
-      
+
       &.selected-trader {
         position: relative;
-        
+
         &:after {
           content: "⇄";
           position: absolute;
@@ -353,6 +353,7 @@ td.currency {
 
     table {
       width: 100%;
+      margin-bottom: 30px; // Add space between tables
 
       tbody {
         tr {

@@ -12,7 +12,7 @@
         <button id="commoditiesViewBtn">Commodities</button>
         <button id="priceComparisonViewBtn">Price Comparison</button>
       </div>
-      
+
       <!-- Trade Routes View -->
       <div id="tradeRoutesView" class="tab active">
         <table id="tradeRoutes">
@@ -24,7 +24,7 @@
           </tbody>
         </table>
       </div>
-      
+
       <!-- Commodities View -->
       <div id="commoditiesView" class="tab">
         <div class="commodities-container">
@@ -43,7 +43,7 @@
             </table>
           </div>
           <div class="right-panel">
-            <h3>Sellers</h3>
+            <h3>Sellers (Buy Prices)</h3>
             <table id="sellersTable">
               <thead>
                 <tr>
@@ -58,17 +58,33 @@
                 <!-- Sellers will be populated here -->
               </tbody>
             </table>
+
+            <h3>Buyers (Sell Prices)</h3>
+            <table id="buyersTable">
+              <thead>
+                <tr>
+                  <th>Faction</th>
+                  <th>Avatar</th>
+                  <th>Currency</th>
+                  <th>Sell Price</th>
+                  <th>% Diff</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Buyers will be populated here -->
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
-      
+
       <!-- Price Comparison View -->
       <div id="priceComparisonView" class="tab">
         <div class="tab-navigation sub-tabs">
           <button id="buyPricesTabBtn" class="active">Buy Prices</button>
           <button id="sellPricesTabBtn">Sell Prices</button>
         </div>
-        
+
         <div id="buyPricesTab" class="tab active overflow-auto">
           <table id="buyPricesTable" class="price-comparison-table">
             <thead>
@@ -82,7 +98,7 @@
             </tbody>
           </table>
         </div>
-        
+
         <div id="sellPricesTab" class="tab overflow-auto">
           <table id="sellPricesTable" class="price-comparison-table">
             <thead>
