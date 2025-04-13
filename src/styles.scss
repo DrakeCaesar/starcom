@@ -11,7 +11,7 @@ body {
   font-family: $font-family;
   background-color: $bg-color;
   color: $text-color;
-  margin-top: 5vh;
+  margin-top: 1vh;
   border: none;
 }
 
@@ -19,9 +19,7 @@ body {
 .table-container {
   display: flex;
   justify-content: center; // Center the table horizontally
-  align-items: center; // Center the table vertically
   width: 100vw; // Full width of the viewport
-  height: 100vh; // Full height of the viewport
   overflow-x: auto; // Horizontal scrolling if needed
   padding: 20px;
 }
@@ -152,8 +150,6 @@ td.currency {
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-height: 80vh; /* Allows vertical centering */
-  justify-content: center;
 }
 
 .tab-navigation {
