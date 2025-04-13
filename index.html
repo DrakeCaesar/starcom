@@ -9,16 +9,96 @@
   </head>
   <body>
     <div class="container">
-      <!-- <h1>Trade Route Optimizer</h1> -->
-      <!-- <button>Get Best Trade Routes</button> -->
-      <table id="tradeRoutes">
-        <thead>
-          <tr></tr>
-        </thead>
-        <tbody>
-          <!-- Trade routes will be populated here -->
-        </tbody>
-      </table>
+      <div class="tab-navigation">
+        <button id="tradeRoutesViewBtn" class="active">Trade Routes</button>
+        <button id="commoditiesViewBtn">Commodities</button>
+        <button id="priceComparisonViewBtn">Price Comparison</button>
+      </div>
+      
+      <!-- Trade Routes View -->
+      <div id="tradeRoutesView" class="tab active">
+        <table id="tradeRoutes">
+          <thead>
+            <tr></tr>
+          </thead>
+          <tbody>
+            <!-- Trade routes will be populated here -->
+          </tbody>
+        </table>
+      </div>
+      
+      <!-- Commodities View -->
+      <div id="commoditiesView" class="tab">
+        <div class="commodities-container">
+          <div class="left-panel">
+            <h3>Commodities</h3>
+            <table id="commodityTable">
+              <thead>
+                <tr>
+                  <th>Commodity</th>
+                  <th>Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Commodity list will be populated here -->
+              </tbody>
+            </table>
+          </div>
+          <div class="right-panel">
+            <h3>Sellers</h3>
+            <table id="sellersTable">
+              <thead>
+                <tr>
+                  <th>Faction</th>
+                  <th>Avatar</th>
+                  <th>Currency</th>
+                  <th>Buy Price</th>
+                  <th>% Diff</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Sellers will be populated here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Price Comparison View -->
+      <div id="priceComparisonView" class="tab">
+        <div class="tab-navigation sub-tabs">
+          <button id="buyPricesTabBtn" class="active">Buy Prices</button>
+          <button id="sellPricesTabBtn">Sell Prices</button>
+        </div>
+        
+        <div id="buyPricesTab" class="tab active overflow-auto">
+          <table id="buyPricesTable" class="price-comparison-table">
+            <thead>
+              <tr>
+                <th>Faction</th>
+                <!-- Commodity headers will be added dynamically -->
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Price data will be populated here -->
+            </tbody>
+          </table>
+        </div>
+        
+        <div id="sellPricesTab" class="tab overflow-auto">
+          <table id="sellPricesTable" class="price-comparison-table">
+            <thead>
+              <tr>
+                <th>Faction</th>
+                <!-- Commodity headers will be added dynamically -->
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Price data will be populated here -->
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </body>
 </html>
