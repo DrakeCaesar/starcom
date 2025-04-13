@@ -39,89 +39,118 @@ function populatePriceTable(
   tbody.innerHTML = "";
 
   // Make the first header cell (Faction) sortable and add reset functionality
-  const firstTh = thead.children[0];
+  const firstTh = thead.children[0] as HTMLTableCellElement;
   if (firstTh) {
     firstTh.classList.add("sortable", "faction-header");
     firstTh.setAttribute("data-faction", "true");
-    
-    // Create corner element for reset
-    const resetCorner = document.createElement("div");
-    resetCorner.classList.add("reset-sort");
-    resetCorner.innerHTML = "×";
-    resetCorner.title = "Reset sorting";
-    resetCorner.style.position = "absolute";
-    resetCorner.style.top = "2px";
-    resetCorner.style.right = "2px";
-    resetCorner.style.cursor = "pointer";
-    resetCorner.style.fontSize = "12px";
-    resetCorner.style.color = "#999";
-    
-    // Make sure the container is positioned relatively
-    firstTh.style.position = "relative";
-    firstTh.appendChild(resetCorner);
-    
-    // Add reset functionality
-    resetCorner.addEventListener("click", (e) => {
-      e.stopPropagation(); // Prevent triggering the parent's click event
-      
+    firstTh.textContent = "Reset"; // Change text to "Reset"
+    firstTh.style.cursor = "pointer";
+    firstTh.style.textAlign = "center";
+
+    // Add reset functionality to the entire cell
+    firstTh.addEventListener("click", () => {
       // Reset all sort states
       Object.keys(sortState).forEach((key) => {
         sortState[key] = 0;
       });
-      
+
       // Remove sort indicators from all headers
       const headers = table.querySelectorAll("thead th.sortable");
       headers.forEach((header) => {
-        header.classList.remove("sort-asc", "sort-desc", "active-faction-sort", "active-trader-sort");
+        header.classList.remove(
+          "sort-asc",
+          "sort-desc",
+          "active-faction-sort",
+          "active-trader-sort"
+        );
       });
-      
-      // Repopulate table
-      populatePriceTableBody(tableId, priceType, sortState, commodityRates);
-    });
-    
-    // Add faction sorting functionality for rows
-    firstTh.addEventListener("click", () => {
-      const isFactionSortActive = firstTh.classList.contains("sort-asc") || 
-                                  firstTh.classList.contains("sort-desc");
-                                  
-      // Reset commodity and trader sort states
-      Object.keys(sortState).forEach((key) => {
-        if (key !== "faction") {
-          sortState[key] = 0;
+
+      // Clear and rebuild the table header with default commodity order
+      // Keep the first header cell (Reset)
+      while (thead.children.length > 1) {
+        const lastChild = thead.lastChild;
+        if (lastChild) {
+          thead.removeChild(lastChild);
         }
-      });
-      
-      // Update faction sort state
-      if (!sortState["faction"]) {
-        sortState["faction"] = 1; // First click: ascending
-      } else if (sortState["faction"] === 1) {
-        sortState["faction"] = 2; // Second click: descending
-      } else {
-        sortState["faction"] = 0; // Third click: no sort
       }
-      
-      // Update sort indicators on all headers
-      const headers = table.querySelectorAll("thead th.sortable");
-      headers.forEach((header) => {
-        header.classList.remove("sort-asc", "sort-desc", "active-faction-sort", "active-trader-sort");
-        
-        if (header === firstTh && sortState["faction"] === 1) {
-          header.classList.add("sort-asc");
-        } else if (header === firstTh && sortState["faction"] === 2) {
-          header.classList.add("sort-desc");
-        }
-      });
-      
-      // Mark all commodity headers as being affected by faction sort
-      if (sortState["faction"] > 0) {
-        headers.forEach((header) => {
-          if (header !== firstTh) {
-            header.classList.add("active-faction-sort");
+
+      // Add commodity headers in their original order
+      Object.keys(commodityRates).forEach((commodity) => {
+        const th = document.createElement("th");
+        th.classList.add("sortable");
+        th.setAttribute("data-commodity", commodity);
+
+        // Create container for icon and name
+        const container = document.createElement("div");
+        container.style.display = "flex";
+        container.style.alignItems = "center";
+        container.style.justifyContent = "center";
+
+        // Add commodity icon
+        const img = document.createElement("img");
+        img.src = `./images/commodities/${commodity}.png`;
+        img.alt = commodity;
+        container.appendChild(img);
+
+        // Add commodity name
+        const span = document.createElement("span");
+        span.textContent = commodity;
+        container.appendChild(span);
+
+        th.appendChild(container);
+
+        // Add sorting functionality
+        th.addEventListener("click", () => {
+          const commodityKey = th.getAttribute("data-commodity") || "";
+
+          // Reset faction sort state
+          sortState["faction"] = 0;
+
+          // Update sort state for this commodity
+          if (!sortState[commodityKey]) {
+            sortState[commodityKey] = 1; // First click: ascending
+          } else if (sortState[commodityKey] === 1) {
+            sortState[commodityKey] = 2; // Second click: descending
+          } else {
+            sortState[commodityKey] = 0; // Third click: no sort
           }
+
+          // Reset sort state for other commodities
+          Object.keys(sortState).forEach((key) => {
+            if (
+              key !== commodityKey &&
+              key !== "faction" &&
+              !key.startsWith("trader:")
+            ) {
+              sortState[key] = 0;
+            }
+          });
+
+          // Update sort indicators
+          const headers = table.querySelectorAll("thead th.sortable");
+          headers.forEach((header) => {
+            header.classList.remove(
+              "sort-asc",
+              "sort-desc",
+              "active-faction-sort",
+              "active-trader-sort"
+            );
+            const headerCommodity = header.getAttribute("data-commodity");
+            if (headerCommodity && sortState[headerCommodity] === 1) {
+              header.classList.add("sort-asc");
+            } else if (headerCommodity && sortState[headerCommodity] === 2) {
+              header.classList.add("sort-desc");
+            }
+          });
+
+          // Re-sort and repopulate table
+          populatePriceTableBody(tableId, priceType, sortState, commodityRates);
         });
-      }
-      
-      // Re-sort and repopulate table
+
+        thead.appendChild(th);
+      });
+
+      // Repopulate table to its default state without any sorting
       populatePriceTableBody(tableId, priceType, sortState, commodityRates);
     });
   }
@@ -169,7 +198,11 @@ function populatePriceTable(
 
       // Reset sort state for other commodities
       Object.keys(sortState).forEach((key) => {
-        if (key !== commodityKey && key !== "faction" && !key.startsWith("trader:")) {
+        if (
+          key !== commodityKey &&
+          key !== "faction" &&
+          !key.startsWith("trader:")
+        ) {
           sortState[key] = 0;
         }
       });
@@ -177,7 +210,12 @@ function populatePriceTable(
       // Update sort indicators
       const headers = table.querySelectorAll("thead th.sortable");
       headers.forEach((header) => {
-        header.classList.remove("sort-asc", "sort-desc", "active-faction-sort", "active-trader-sort");
+        header.classList.remove(
+          "sort-asc",
+          "sort-desc",
+          "active-faction-sort",
+          "active-trader-sort"
+        );
         const headerCommodity = header.getAttribute("data-commodity");
         if (headerCommodity && sortState[headerCommodity] === 1) {
           header.classList.add("sort-asc");
@@ -214,17 +252,20 @@ function populatePriceTableBody(
   const factionNames = Object.keys(factions);
 
   // Check for trader (faction) column sorting
-  const traderSortKey = Object.keys(sortState).find(key => 
-    key.startsWith("trader:") && sortState[key] > 0
+  const traderSortKey = Object.keys(sortState).find(
+    (key) => key.startsWith("trader:") && sortState[key] > 0
   );
-  
+
   // Get the selected trader name if a trader sort is active
-  const selectedTraderName = traderSortKey ? traderSortKey.replace("trader:", "") : null;
+  const selectedTraderName = traderSortKey
+    ? traderSortKey.replace("trader:", "")
+    : null;
 
   // Determine if we need to sort by commodity
   let sortedFactions = [...factionNames];
   const sortCommodity = Object.keys(sortState).find(
-    (key) => sortState[key] > 0 && key !== "faction" && !key.startsWith("trader:")
+    (key) =>
+      sortState[key] > 0 && key !== "faction" && !key.startsWith("trader:")
   );
 
   // Sort by commodity (column sorting)
@@ -252,7 +293,7 @@ function populatePriceTableBody(
         return priceB - priceA;
       }
     });
-  } 
+  }
   // Sort by faction (row sorting)
   else if (sortState["faction"] > 0) {
     // Keep original faction order, but we'll sort the commodities when we create the rows
@@ -263,14 +304,14 @@ function populatePriceTableBody(
   if (selectedTraderName) {
     const selectedTraderData = factions[selectedTraderName];
     const traderKey = `trader:${selectedTraderName}`; // Define traderKey here to fix the reference error
-    
+
     if (selectedTraderData) {
       // Get all commodities with their aluminum-equivalent prices and percentage differences for this trader
-      const commoditiesWithPercentages = sortedCommodities.map(commodity => {
+      const commoditiesWithPercentages = sortedCommodities.map((commodity) => {
         const commodityData = selectedTraderData.commodities[commodity];
         let percentDiff = null;
         let hasPricing = false;
-        
+
         if (commodityData && commodityData[priceType]) {
           const currencyRate = commodityRates[selectedTraderData.currency];
           const priceInAluminum = commodityData[priceType] * currencyRate;
@@ -278,26 +319,26 @@ function populatePriceTableBody(
           percentDiff = (priceInAluminum / commodityRates[commodity] - 1) * 100;
           hasPricing = true;
         }
-        
+
         return {
           commodity,
           percentDiff,
-          hasPricing
+          hasPricing,
         };
       });
-      
+
       // Sort commodities based on their percentage differences for this trader
       commoditiesWithPercentages.sort((a, b) => {
         // Put items with pricing first
         if (a.hasPricing && !b.hasPricing) return -1;
         if (!a.hasPricing && b.hasPricing) return 1;
         if (!a.hasPricing && !b.hasPricing) return 0;
-        
+
         // For buy prices, lower percentages are better (good deals)
         // For sell prices, higher percentages are better (profitable sales)
         const aValue = a.percentDiff || 0;
         const bValue = b.percentDiff || 0;
-        
+
         // Sort by percentage difference
         if (sortState[traderKey] === 1) {
           // Ascending order
@@ -307,10 +348,12 @@ function populatePriceTableBody(
           return bValue - aValue;
         }
       });
-      
+
       // Update sorted commodities order
-      sortedCommodities = commoditiesWithPercentages.map(item => item.commodity);
-      
+      sortedCommodities = commoditiesWithPercentages.map(
+        (item) => item.commodity
+      );
+
       // Also need to reorder the table headers to match the new commodity order
       const thead = table.querySelector("thead tr");
       if (thead) {
@@ -321,39 +364,39 @@ function populatePriceTableBody(
           for (let i = headers.length - 1; i > 0; i--) {
             thead.removeChild(headers[i]);
           }
-          
+
           // Recreate headers in the new order
           sortedCommodities.forEach((commodity) => {
             const th = document.createElement("th");
             th.classList.add("sortable");
             th.setAttribute("data-commodity", commodity);
-        
+
             // Create container for icon and name
             const container = document.createElement("div");
             container.style.display = "flex";
             container.style.alignItems = "center";
             container.style.justifyContent = "center";
-        
+
             // Add commodity icon
             const img = document.createElement("img");
             img.src = `./images/commodities/${commodity}.png`;
             img.alt = commodity;
             container.appendChild(img);
-        
+
             // Add commodity name
             const span = document.createElement("span");
             span.textContent = commodity;
             container.appendChild(span);
-        
+
             th.appendChild(container);
-        
+
             // Add sorting functionality
             th.addEventListener("click", () => {
               const commodityKey = th.getAttribute("data-commodity") || "";
-        
+
               // Reset faction sort state
               sortState["faction"] = 0;
-        
+
               // Update sort state for this commodity
               if (!sortState[commodityKey]) {
                 sortState[commodityKey] = 1; // First click: ascending
@@ -362,33 +405,50 @@ function populatePriceTableBody(
               } else {
                 sortState[commodityKey] = 0; // Third click: no sort
               }
-        
+
               // Reset sort state for other commodities
               Object.keys(sortState).forEach((key) => {
-                if (key !== commodityKey && key !== "faction" && !key.startsWith("trader:")) {
+                if (
+                  key !== commodityKey &&
+                  key !== "faction" &&
+                  !key.startsWith("trader:")
+                ) {
                   sortState[key] = 0;
                 }
               });
-        
+
               // Update sort indicators
               const allHeaders = table.querySelectorAll("thead th.sortable");
               allHeaders.forEach((header) => {
-                header.classList.remove("sort-asc", "sort-desc", "active-faction-sort", "active-trader-sort");
+                header.classList.remove(
+                  "sort-asc",
+                  "sort-desc",
+                  "active-faction-sort",
+                  "active-trader-sort"
+                );
                 const headerCommodity = header.getAttribute("data-commodity");
                 if (headerCommodity && sortState[headerCommodity] === 1) {
                   header.classList.add("sort-asc");
-                } else if (headerCommodity && sortState[headerCommodity] === 2) {
+                } else if (
+                  headerCommodity &&
+                  sortState[headerCommodity] === 2
+                ) {
                   header.classList.add("sort-desc");
                 }
               });
-        
+
               // Re-sort and repopulate table
-              populatePriceTableBody(tableId, priceType, sortState, commodityRates);
+              populatePriceTableBody(
+                tableId,
+                priceType,
+                sortState,
+                commodityRates
+              );
             });
-        
+
             thead.appendChild(th);
           });
-          
+
           // Mark commodity headers as being affected by trader sort
           if (sortState[traderKey] > 0) {
             const allHeaders = table.querySelectorAll("thead th.sortable");
@@ -411,12 +471,12 @@ function populatePriceTableBody(
     // Add faction name cell
     const nameCell = document.createElement("td");
     nameCell.classList.add("clickable-trader");
-    
+
     // Highlight faction row if it's being used for sorting
     if (sortState["faction"] > 0) {
       nameCell.style.backgroundColor = "rgba(44, 139, 160, 0.3)";
     }
-    
+
     // Highlight row if it's the selected trader for column sorting
     if (selectedTraderName === factionName) {
       nameCell.classList.add("selected-trader");
@@ -443,21 +503,21 @@ function populatePriceTableBody(
     container.appendChild(nameSpan);
 
     nameCell.appendChild(container);
-    
+
     // Add trader sorting functionality (column sorting)
     nameCell.addEventListener("click", () => {
       const traderKey = `trader:${factionName}`;
-      
+
       // Reset row sort states
       sortState["faction"] = 0;
-      
+
       // Reset commodity sort states
       Object.keys(sortState).forEach((key) => {
         if (!key.startsWith("trader:")) {
           sortState[key] = 0;
         }
       });
-      
+
       // Update trader sort state for this specific trader
       if (!sortState[traderKey]) {
         sortState[traderKey] = 1; // First click: ascending
@@ -466,55 +526,56 @@ function populatePriceTableBody(
       } else {
         sortState[traderKey] = 0; // Third click: no sort
       }
-      
+
       // Reset sort state for other traders
       Object.keys(sortState).forEach((key) => {
         if (key.startsWith("trader:") && key !== traderKey) {
           sortState[key] = 0;
         }
       });
-      
+
       // Re-populate table with new sorting
       populatePriceTableBody(tableId, priceType, sortState, commodityRates);
     });
-    
+
     row.appendChild(nameCell);
 
     // Sort commodities by faction profitability for row sorting
     let rowSortedCommodities = [...sortedCommodities];
-    
+
     // Sort by faction (row sorting) - only for the current row
     if (sortState["faction"] > 0) {
       // Create a map of commodities with their aluminum-equivalent prices for this faction
-      const commodityProfitabilities = rowSortedCommodities.map(commodity => {
+      const commodityProfitabilities = rowSortedCommodities.map((commodity) => {
         const commodityData = factionData.commodities[commodity];
         let profitability = 0;
         let hasPricing = false;
-        
+
         if (commodityData && commodityData[priceType]) {
           const currencyRate = commodityRates[factionData.currency];
           const priceInAluminum = commodityData[priceType] * currencyRate;
-          const percentDiff = (priceInAluminum / commodityRates[commodity] - 1) * 100;
-          
+          const percentDiff =
+            (priceInAluminum / commodityRates[commodity] - 1) * 100;
+
           // For buy prices, lower is better (negative percentDiff is good)
           // For sell prices, higher is better (positive percentDiff is good)
           profitability = priceType === "buy" ? -percentDiff : percentDiff;
           hasPricing = true;
         }
-        
+
         return {
           commodity,
           profitability,
-          hasPricing
+          hasPricing,
         };
       });
-      
+
       // Sort commodities by profitability for this faction
       commodityProfitabilities.sort((a, b) => {
         // Put items with pricing first
         if (a.hasPricing && !b.hasPricing) return -1;
         if (!a.hasPricing && b.hasPricing) return 1;
-        
+
         // Sort by profitability
         if (sortState["faction"] === 1) {
           // Ascending (least profitable first)
@@ -524,9 +585,11 @@ function populatePriceTableBody(
           return b.profitability - a.profitability;
         }
       });
-      
+
       // Use the sorted commodity list
-      rowSortedCommodities = commodityProfitabilities.map(item => item.commodity);
+      rowSortedCommodities = commodityProfitabilities.map(
+        (item) => item.commodity
+      );
     }
 
     // Add price cells for each commodity - use the globally sorted commodities, not row-specific sorting
