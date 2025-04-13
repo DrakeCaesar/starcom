@@ -131,14 +131,16 @@ function populatePriceTableBody(
     sortedFactions.sort((a, b) => {
       const factionA = factions[a];
       const factionB = factions[b];
-      
+
       // Convert to aluminum-equivalent prices for sorting
-      const priceA = factionA.commodities[sortCommodity]?.[priceType] 
-        ? factionA.commodities[sortCommodity][priceType] * commodityRates[factionA.currency]
+      const priceA = factionA.commodities[sortCommodity]?.[priceType]
+        ? factionA.commodities[sortCommodity][priceType] *
+          commodityRates[factionA.currency]
         : Number.MAX_VALUE;
-      
+
       const priceB = factionB.commodities[sortCommodity]?.[priceType]
-        ? factionB.commodities[sortCommodity][priceType] * commodityRates[factionB.currency]
+        ? factionB.commodities[sortCommodity][priceType] *
+          commodityRates[factionB.currency]
         : Number.MAX_VALUE;
 
       if (sortState[sortCommodity] === 1) {
@@ -193,12 +195,12 @@ function populatePriceTableBody(
         const priceInAluminum = commodityData[priceType] * currencyRate;
         const percentDiff =
           (priceInAluminum / commodityRates[commodity] - 1) * 100;
-          
+
         // Display aluminum-equivalent price instead of raw price
         cell.textContent = priceInAluminum.toFixed(2);
-        
+
         // Add currency indicator - small Aluminum icon/text
-        const currencyIndicator = document.createElement('span');
+        const currencyIndicator = document.createElement("span");
         currencyIndicator.textContent = " Al";
         currencyIndicator.style.fontSize = "0.8em";
         currencyIndicator.style.opacity = "0.7";
