@@ -619,6 +619,11 @@ function populatePriceTableBody(
           cell.style.backgroundColor = "rgba(44, 139, 160, 0.3)";
         }
 
+        // Highlight the entire row if this trader is selected
+        if (selectedTraderName === factionName) {
+          cell.style.backgroundColor = "rgba(44, 139, 160, 0.3)";
+        }
+
         // Set color based on whether it's buy or sell price
         const isBenefit = priceType === "sell" ? true : false;
         const color = getColor(percentDiff, isBenefit);
@@ -626,6 +631,11 @@ function populatePriceTableBody(
       } else {
         cell.textContent = "-";
         cell.style.color = "#555";
+
+        // Highlight the empty cells too if this trader is selected
+        if (selectedTraderName === factionName) {
+          cell.style.backgroundColor = "rgba(44, 139, 160, 0.3)";
+        }
       }
 
       row.appendChild(cell);
