@@ -149,6 +149,11 @@ td.currency {
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 80vh; /* Allows vertical centering */
+  justify-content: center;
 }
 
 .tab-navigation {
