@@ -198,4 +198,24 @@ export const factions: Factions = {
       Adamantine: { sell: 62.47, buy: 94.72 },
     },
   },
+  Abyssar: {
+    currency: "Platinum",
+    commodities: {
+      Aluminum: { sell: 0.09, buy: 0.12 },
+      Copper: { sell: 0.14, buy: 0.19 },
+      Silver: { sell: 0.21, buy: 0.3 }, 
+      Titanium: { sell: 0.42, buy: 0.59 },
+      Yttrium: { sell: 0.64, buy: 0.9 }, 
+      Gold: { sell: 0.67, buy: 0.95 }, 
+      // Platinum is the currency
+      Uranium: { sell: 0.97, buy: 1.37 },
+      Iridium: { sell: 2.1, buy: 2.97 }, 
+      DiBeryllium: { sell: 3.78, buy: 5.35 }, 
+      Chiralite: { sell: 4.62, buy: 6.54 },
+      Neutronium: { sell: 7.57, buy: 10.71 },  
+      Etherine: { sell: 14.68, buy: 20.78 }, 
+      Xenium: { sell: 16.81, buy: 23.79 }, 
+      Adamantine: { sell: 60.59, buy: 85.76 },
+    },
+  },
 };
