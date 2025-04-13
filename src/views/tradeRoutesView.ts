@@ -101,7 +101,7 @@ export function recommendTradeRoutes(commodityRates: CommodityRate) {
     <td class="currency" style="background-image: url('./images/commodities/${
       tradeInfo.bestBuyCurrency
     }.png');"></td>
-    <td class="left-align-right">${tradeInfo.bestBuyPriceOG.toFixed(2)}</td>
+    <td class="left-align-right">${tradeInfo.bestBuyPrice.toFixed(2)} <span style="font-size: 0.8em; opacity: 0.7;">Al</span></td>
     <td class="left-align-right" style="color: ${buyPercentageColor};">
       ${tradeInfo.bestBuyPercentage.toFixed(0)}%
     </td>
@@ -115,7 +115,7 @@ export function recommendTradeRoutes(commodityRates: CommodityRate) {
     <td class="currency" style="background-image: url('./images/commodities/${
       tradeInfo.bestSellCurrency
     }.png');"></td>
-    <td class="left-align-right">${tradeInfo.bestSellPriceOG.toFixed(2)}</td>
+    <td class="left-align-right">${tradeInfo.bestSellPrice.toFixed(2)} <span style="font-size: 0.8em; opacity: 0.7;">Al</span></td>
     <td class="left-align-right" style="color: ${sellPercentageColor};">
       ${tradeInfo.bestSellPercentage.toFixed(0)}%
     </td>

@@ -131,11 +131,15 @@ function populatePriceTableBody(
     sortedFactions.sort((a, b) => {
       const factionA = factions[a];
       const factionB = factions[b];
-
-      const priceA =
-        factionA.commodities[sortCommodity]?.[priceType] || Number.MAX_VALUE;
-      const priceB =
-        factionB.commodities[sortCommodity]?.[priceType] || Number.MAX_VALUE;
+      
+      // Convert to aluminum-equivalent prices for sorting
+      const priceA = factionA.commodities[sortCommodity]?.[priceType] 
+        ? factionA.commodities[sortCommodity][priceType] * commodityRates[factionA.currency]
+        : Number.MAX_VALUE;
+      
+      const priceB = factionB.commodities[sortCommodity]?.[priceType]
+        ? factionB.commodities[sortCommodity][priceType] * commodityRates[factionB.currency]
+        : Number.MAX_VALUE;
 
       if (sortState[sortCommodity] === 1) {
         // ascending
@@ -184,18 +188,26 @@ function populatePriceTableBody(
 
       const commodityData = factionData.commodities[commodity];
       if (commodityData && commodityData[priceType]) {
-        cell.textContent = commodityData[priceType].toFixed(2);
+        // Calculate price in aluminum for display and color coding
+        const currencyRate = commodityRates[factionData.currency];
+        const priceInAluminum = commodityData[priceType] * currencyRate;
+        const percentDiff =
+          (priceInAluminum / commodityRates[commodity] - 1) * 100;
+          
+        // Display aluminum-equivalent price instead of raw price
+        cell.textContent = priceInAluminum.toFixed(2);
+        
+        // Add currency indicator - small Aluminum icon/text
+        const currencyIndicator = document.createElement('span');
+        currencyIndicator.textContent = " Al";
+        currencyIndicator.style.fontSize = "0.8em";
+        currencyIndicator.style.opacity = "0.7";
+        cell.appendChild(currencyIndicator);
 
         // Highlight the cell if it's the sorted column
         if (sortState[commodity] > 0) {
           cell.style.backgroundColor = "rgba(44, 139, 160, 0.3)";
         }
-
-        // Calculate price in aluminum for color coding
-        const currencyRate = commodityRates[factionData.currency];
-        const priceInAluminum = commodityData[priceType] * currencyRate;
-        const percentDiff =
-          (priceInAluminum / commodityRates[commodity] - 1) * 100;
 
         // Set color based on whether it's buy or sell price
         const isBenefit = priceType === "sell" ? true : false;

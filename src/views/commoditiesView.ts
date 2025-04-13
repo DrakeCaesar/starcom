@@ -129,8 +129,17 @@ export function showSellersForCommodity(
     // Buy price
     const priceCell = document.createElement("td");
     priceCell.classList.add("numeric");
-    priceCell.textContent =
-      factionData.data.commodities[commodity].buy.toFixed(2);
+    
+    // Display aluminum-equivalent price instead of raw price
+    priceCell.textContent = factionData.priceInAluminum.toFixed(2);
+    
+    // Add currency indicator - small Aluminum icon/text
+    const currencyIndicator = document.createElement('span');
+    currencyIndicator.textContent = " Al";
+    currencyIndicator.style.fontSize = "0.8em";
+    currencyIndicator.style.opacity = "0.7";
+    priceCell.appendChild(currencyIndicator);
+    
     row.appendChild(priceCell);
 
     // Percentage difference
