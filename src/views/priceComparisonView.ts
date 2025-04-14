@@ -604,15 +604,11 @@ function populatePriceTableBody(
         const percentDiff =
           (priceInAluminum / commodityRates[commodity] - 1) * 100;
 
-        // Display aluminum-equivalent price instead of raw price
-        cell.textContent = priceInAluminum.toFixed(2);
+        // Display percentage difference instead of raw aluminum price
+        cell.textContent = `${percentDiff >= 0 ? '+' : ''}${percentDiff.toFixed(1)}%`;
 
-        // Add currency indicator - small Aluminum icon/text
-        const currencyIndicator = document.createElement("span");
-        currencyIndicator.textContent = " Al";
-        currencyIndicator.style.fontSize = "0.8em";
-        currencyIndicator.style.opacity = "0.7";
-        cell.appendChild(currencyIndicator);
+        // Add tooltip showing the actual aluminum-equivalent price
+        cell.title = `${priceInAluminum.toFixed(2)} Al`;
 
         // Highlight the cell if it's the sorted column
         if (sortState[commodity] > 0) {
