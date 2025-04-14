@@ -605,7 +605,8 @@ function populatePriceTableBody(
           (priceInAluminum / commodityRates[commodity] - 1) * 100;
 
         // Display percentage difference instead of aluminum-equivalent price
-        const percentString = (percentDiff >= 0 ? '+' : '') + percentDiff.toFixed(2) + '%';
+        const percentString =
+          (percentDiff >= 0 ? "+" : "") + percentDiff.toFixed(2) + "%";
         cell.textContent = percentString;
 
         // Highlight the cell if it's the sorted column
