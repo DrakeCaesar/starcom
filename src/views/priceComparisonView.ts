@@ -85,16 +85,23 @@ function populatePriceTable(
         container.style.display = "flex";
         container.style.alignItems = "center";
         container.style.justifyContent = "center";
+        container.style.flexDirection = "column"; // Stack icon and text vertically
 
         // Add commodity icon
         const img = document.createElement("img");
         img.src = `./images/commodities/${commodity}.png`;
         img.alt = commodity;
+        img.style.width = "36px"; // Make image larger
+        img.style.height = "36px"; // Make image larger
+        img.style.display = "block"; // Make image a block element
+        img.style.margin = "0 auto 5px"; // Center image and add space below
         container.appendChild(img);
 
         // Add commodity name
         const span = document.createElement("span");
         span.textContent = commodity;
+        span.style.display = "block"; // Make text a block element
+        span.style.fontSize = "12px"; // Smaller font for the commodity name
         container.appendChild(span);
 
         th.appendChild(container);
@@ -166,16 +173,23 @@ function populatePriceTable(
     container.style.display = "flex";
     container.style.alignItems = "center";
     container.style.justifyContent = "center";
+    container.style.flexDirection = "column"; // Stack icon and text vertically
 
     // Add commodity icon
     const img = document.createElement("img");
     img.src = `./images/commodities/${commodity}.png`;
     img.alt = commodity;
+    img.style.width = "36px"; // Make image larger
+    img.style.height = "36px"; // Make image larger
+    img.style.display = "block"; // Make image a block element
+    img.style.margin = "0 auto 5px"; // Center image and add space below
     container.appendChild(img);
 
     // Add commodity name
     const span = document.createElement("span");
     span.textContent = commodity;
+    span.style.display = "block"; // Make text a block element
+    span.style.fontSize = "12px"; // Smaller font for the commodity name
     container.appendChild(span);
 
     th.appendChild(container);
@@ -376,16 +390,23 @@ function populatePriceTableBody(
             container.style.display = "flex";
             container.style.alignItems = "center";
             container.style.justifyContent = "center";
+            container.style.flexDirection = "column"; // Stack icon and text vertically
 
             // Add commodity icon
             const img = document.createElement("img");
             img.src = `./images/commodities/${commodity}.png`;
             img.alt = commodity;
+            img.style.width = "36px"; // Make image larger
+            img.style.height = "36px"; // Make image larger
+            img.style.display = "block"; // Make image a block element
+            img.style.margin = "0 auto 5px"; // Center image and add space below
             container.appendChild(img);
 
             // Add commodity name
             const span = document.createElement("span");
             span.textContent = commodity;
+            span.style.display = "block"; // Make text a block element
+            span.style.fontSize = "12px"; // Smaller font for the commodity name
             container.appendChild(span);
 
             th.appendChild(container);
