@@ -218,4 +218,24 @@ export const factions: Factions = {
       Adamantine: { sell: 60.59, buy: 85.76 },
     },
   },
+  CXTA: {
+    currency: "Gold",
+    commodities: {
+      Aluminum: { sell: 0.11, buy: 0.15 },
+      Copper: { sell: 0.17, buy: 0.21 },
+      Silver: { sell: 0.28, buy: 0.35 },
+      Titanium: { sell: 0.45, buy: 0.58 },
+      Yttrium: { sell: 1.0, buy: 1.29 },
+      // Gold is the currency
+      Platinum: { sell: 1.14, buy: 1.46 },
+      Uranium: { sell: 0.9, buy: 1.16 },
+      Iridium: { sell: 3.2, buy: 4.11 },
+      DiBeryllium: { sell: 5.12, buy: 6.58 },
+      Chiralite: { sell: 6.06, buy: 7.8 },
+      Neutronium: { sell: 9.92, buy: 12.76 },
+      Etherine: { sell: 24.48, buy: 31.47 },
+      Xenium: { sell: 22.05, buy: 28.35 },
+      Adamantine: { sell: 55.12, buy: 70.87 },
+    },
+  },
 };
